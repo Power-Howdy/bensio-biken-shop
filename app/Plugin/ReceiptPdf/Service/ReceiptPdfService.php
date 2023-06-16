@@ -1043,7 +1043,7 @@ class ReceiptPdfService extends AbstractFPDIService
         //送料（税込１０％）
         $this->SetTextColor(0, 0, 0);        
         $this->Cell(($this->widthCellByFront[0] + $this->widthCellByFront[1]), 7, '', 0, 0, 'C', 0);
-        $this->Cell(($this->widthCellByFront[2] + $this->widthCellByFront[3]), 7, '送料（税込１０％）', 1, 0, 'C', 0);
+        $this->Cell(($this->widthCellByFront[2] + $this->widthCellByFront[3]), 7, '送料(税込10%)', 1, 0, 'C', 0);
         // $this->SetTextColor(255, 0, 0);//this color is red
         $this->Cell($this->widthCellByFront[4], 7, $Order->getDeliveryFeeTotal() == 0 ? '' : $this->getPriceFilter($Order->getDeliveryFeeTotal()), 1, 0, 'R', 0);
         $this->Ln();
