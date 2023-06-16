@@ -969,7 +969,7 @@ class ReceiptPdfService extends AbstractFPDIService
         //font increase
         $this->SetFont(self::FONT_SJIS, '', 9); //8
         $this->SetFillColor(255, 255, 255);
-        $this->MultiCell(($this->widthCellByFront[0] + $this->widthCellByFront[1]), 7 * 8, '＜備考欄＞ ご利用ありがとうございました。                                                            ', 1, 0, 'L', 0);
+        $this->MultiCell(($this->widthCellByFront[0] + $this->widthCellByFront[1]), 7 * 9, '＜備考欄＞ ご利用ありがとうございました。                                                            ', 1, 0, 'L', 0);
         //font restore
         $this->SetFont(self::FONT_SJIS, '', 8); //7
         $this->Cell(($this->widthCellByFront[2] + $this->widthCellByFront[3]), 7, '10%対象税抜金額', 1, 0, 'C', 0);
