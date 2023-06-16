@@ -646,7 +646,7 @@ class ReceiptPdfService extends AbstractFPDIService
 
         // 総合計金額
         $this->SetFont(self::FONT_SJIS, 'B', 12);
-        $paymentTotalText = number_format($Order->getPaymentTotal()+$Order->getDeliveryFeeTotal()*0.1) . ' ' . self::MONETARY_UNIT;
+        $paymentTotalText = number_format($Order->getPaymentTotal()) . ' ' . self::MONETARY_UNIT;
 
         $this->setBasePosition(156, 60);
         $this->Cell(30, 6, '', 0, 0, '', 0, '');
