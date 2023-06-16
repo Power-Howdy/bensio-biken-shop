@@ -1,0 +1,13 @@
+name: 領収書出力プラグイン
+event: ReceiptPdfEvent
+code: ReceiptPdf
+version: 1.0.2
+service:
+    - ReceiptPdfServiceProvider
+orm.path:
+    - /Resource/doctrine
+const:
+    logo_file: logo.png
+    pdf_file: nouhinsyo1.pdf
+    pdf_file2: receipt1.pdf
+    receipt_pdf_message_len: 30

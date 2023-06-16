@@ -1,0 +1,48 @@
+<script>
+    $(function (){
+        $('#payment_list').after(
+            '<div id="ec_trans_deliv_wrap" class="row">' +
+                '<div id="ec_trans_deliv_list_box" class="col-md-12">' +
+                    '<div id="ec_trans_deliv_list_box__body" class="box">' +
+                        '<div id="ec_trans_deliv_list_box__header" class="box-header">' +
+                            '<h2 class="heading02">お届け日・お支払い時期について</h2>' +
+                        '</div>' +
+                        '<div id="deliv_box" class="row">' +
+                            '<div id="deliv_box__body" class="col-md-12">' +
+                                {% for descriptionPaymentDeliv in arrRegularDescriptionPaymentDeliv %}
+                                    {% if descriptionPaymentDeliv['free_description_payment_delivery']|trim is not empty %}
+                                        {% set free_payment_delivery = descriptionPaymentDeliv['free_description_payment_delivery'] |replace({ '\r\n': '<br>', '\n': '<br>', '\r': '<br>' })|escape('js') %}
+                                        '<div>{{ descriptionPaymentDeliv['product_name'] }}：{{ free_payment_delivery }} </div>' +
+                                    {% endif %}
+                                {% endfor %}
+                                '<div id="deliv_box__message">決済方法：{{ methodName }}　{{ limitCycle }}回購入</div>' +
+                                '<div id="deliv_box__body_inner" class="dl_table" style="border-top: 1px solid #ccc;border-left: 1px solid #ccc;">' +
+                                    '<dl id="deliv_box__number">' +
+                                        '<dt style="vertical-align:middle;border-bottom: 1px solid #ccc;border-right: 1px solid #ccc;">日程/回数</dt>' +
+                                    {% for i in 1..limitCycle %}
+                                        '<dd class="form-group form-inline txt_center" style="vertical-align:middle;border-bottom: 1px solid #ccc;border-right: 1px solid #ccc;padding:8px">{{ loop.index }}</dd>' +
+                                    {% endfor %}
+                                    '</dl>' +
+
+                                    {#'<dl id="deliv_box__deliv">' +#}
+                                    {#    '<dt style="vertical-align:middle;border-bottom: 1px solid #ccc;border-right: 1px solid #ccc;">お届け日</dt>' +#}
+                                    {#    {% for key, value in nextOrderDate %}#}
+                                    {#        '<dd class="form-group form-inline txt_center" style="vertical-align:middle;border-bottom: 1px solid #ccc;border-right: 1px solid #ccc;padding:8px">{{ value|date('Y/m/d') }}</dd>' +#}
+                                    {#    {% endfor %}#}
+                                    {#'</dl>' +#}
+
+                                    '<dl id="deliv_box__payment_time">' +
+                                        '<dt style="vertical-align:middle;border-bottom: 1px solid #ccc;border-right: 1px solid #ccc;">お支払い時期</dt>' +
+                                        {% for key, value in purchaseOrderDate %}
+                                            '<dd class="form-group form-inline txt_center" style="vertical-align:middle;border-bottom: 1px solid #ccc;border-right: 1px solid #ccc;padding:8px">{{ value|date('Y/m/d') }}</dd>' +
+                                        {% endfor %}
+                                    '</dl>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
+        );
+    })
+</script>

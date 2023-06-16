@@ -1,0 +1,18 @@
+{% block main %}
+    <!-- ▼その他決済情報を表示する場合は表示 -->
+    {% if arrOther.title.value is defined %}<h2 class="heading02">■ {{ arrOther.title.value }}情報</h2>{% endif %}
+
+    <p style="text-align:left; word-wrap: break-word; white-space: normal;">
+        {% for key, item in arrOther %}
+            {% if key != 'title' %}
+                {% if not item.name is empty %}{{ item.name|nl2br }}:{% endif %}
+                {% if key == 'payment_url' %}
+                    <a href='#' onClick="window.open('{{ item.value }}'); " >{{ item.value }}</a>
+                {% else %}
+                    {{ item.value|nl2br }}
+                {% endif %}
+                <br/>
+            {% endif %}
+        {% endfor %}
+    </p>
+{% endblock %}

@@ -1,0 +1,43 @@
+Eccube\Entity\MailHistory:
+    type: entity
+    table: dtb_mail_history
+    repositoryClass: Eccube\Repository\MailHistoryRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: send_id
+            generator:
+                strategy: AUTO
+    fields:
+        send_date:
+            type: datetime
+            nullable: true
+        subject:
+            type: text
+            nullable: true
+        mail_body:
+            type: text
+            nullable: true
+    manyToOne:
+        Order:
+            targetEntity: Eccube\Entity\Order
+            inversedBy: MailHistories
+            joinColumn:
+                name: order_id
+                referencedColumnName: order_id
+                nullable: false
+        MailTemplate:
+            targetEntity: Eccube\Entity\MailTemplate
+            joinColumn:
+                name: template_id
+                referencedColumnName: template_id
+        Creator:
+            targetEntity: Eccube\Entity\Member
+            joinColumn:
+                name: creator_id
+                referencedColumnName: member_id
+                nullable: true
+    lifecycleCallbacks: {  }

@@ -1,0 +1,340 @@
+Eccube\Entity\Product:
+    type: entity
+    table: dtb_product
+    repositoryClass: Eccube\Repository\ProductRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: product_id
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: text
+            nullable: false
+            length: 65535
+        note:
+            type: text
+            nullable: true
+            length: 65535
+        description_list:
+            type: text
+            nullable: true
+            length: 65535
+        description_detail:
+            type: text
+            nullable: true
+            length: 65535
+        search_word:
+            type: text
+            nullable: true
+            length: 65535
+        free_area:
+            type: text
+            nullable: true
+            length: 65535
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            options:
+                default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+        video_url1:
+            type: text
+            nullable: true
+            length: 65535
+        video_url2:
+            type: text
+            nullable: true
+            length: 65535
+        video_url3:
+            type: text
+            nullable: true
+            length: 65535
+        video_url4:
+            type: text
+            nullable: true
+            length: 65535
+        video_url5:
+            type: text
+            nullable: true
+            length: 65535
+        video_url6:
+            type: text
+            nullable: true
+            length: 65535
+        video_url7:
+            type: text
+            nullable: true
+            length: 65535
+        video_url8:
+            type: text
+            nullable: true
+            length: 65535
+        video_url9:
+            type: text
+            nullable: true
+            length: 65535
+        video_url10:
+            type: text
+            nullable: true
+            length: 65535
+        video_url11:
+            type: text
+            nullable: true
+            length: 65535
+        video_url12:
+            type: text
+            nullable: true
+            length: 65535
+        video_url13:
+            type: text
+            nullable: true
+            length: 65535
+        video_url14:
+            type: text
+            nullable: true
+            length: 65535
+        video_url15:
+            type: text
+            nullable: true
+            length: 65535
+        video_url16:
+            type: text
+            nullable: true
+            length: 65535
+        video_url17:
+            type: text
+            nullable: true
+            length: 65535
+        video_url18:
+            type: text
+            nullable: true
+            length: 65535
+        video_url19:
+            type: text
+            nullable: true
+            length: 65535
+        video_url20:
+            type: text
+            nullable: true
+            length: 65535
+        video_title1:
+            type: text
+            nullable: true
+            length: 65535
+        video_title2:
+            type: text
+            nullable: true
+            length: 65535
+        video_title3:
+            type: text
+            nullable: true
+            length: 65535
+        video_title4:
+            type: text
+            nullable: true
+            length: 65535
+        video_title5:
+            type: text
+            nullable: true
+            length: 65535
+        video_title6:
+            type: text
+            nullable: true
+            length: 65535
+        video_title7:
+            type: text
+            nullable: true
+            length: 65535
+        video_title8:
+            type: text
+            nullable: true
+            length: 65535
+        video_title9:
+            type: text
+            nullable: true
+            length: 65535
+        video_title10:
+            type: text
+            nullable: true
+            length: 65535
+        video_title11:
+            type: text
+            nullable: true
+            length: 65535
+        video_title12:
+            type: text
+            nullable: true
+            length: 65535
+        video_title13:
+            type: text
+            nullable: true
+            length: 65535
+        video_title14:
+            type: text
+            nullable: true
+            length: 65535
+        video_title15:
+            type: text
+            nullable: true
+            length: 65535
+        video_title16:
+            type: text
+            nullable: true
+            length: 65535
+        video_title17:
+            type: text
+            nullable: true
+            length: 65535
+        video_title18:
+            type: text
+            nullable: true
+            length: 65535
+        video_title19:
+            type: text
+            nullable: true
+            length: 65535
+        video_title20:
+            type: text
+            nullable: true
+            length: 65535
+        video_text1:
+            type: text
+            nullable: true
+            length: 65535
+        video_text2:
+            type: text
+            nullable: true
+            length: 65535
+        video_text3:
+            type: text
+            nullable: true
+            length: 65535
+        video_text4:
+            type: text
+            nullable: true
+            length: 65535
+        video_text5:
+            type: text
+            nullable: true
+            length: 65535
+        video_text6:
+            type: text
+            nullable: true
+            length: 65535
+        video_text7:
+            type: text
+            nullable: true
+            length: 65535
+        video_text8:
+            type: text
+            nullable: true
+            length: 65535
+        video_text9:
+            type: text
+            nullable: true
+            length: 65535
+        video_text10:
+            type: text
+            nullable: true
+            length: 65535
+        video_text11:
+            type: text
+            nullable: true
+            length: 65535
+        video_text12:
+            type: text
+            nullable: true
+            length: 65535
+        video_text13:
+            type: text
+            nullable: true
+            length: 65535
+        video_text14:
+            type: text
+            nullable: true
+            length: 65535
+        video_text15:
+            type: text
+            nullable: true
+            length: 65535
+        video_text16:
+            type: text
+            nullable: true
+            length: 65535
+        video_text17:
+            type: text
+            nullable: true
+            length: 65535
+        video_text18:
+            type: text
+            nullable: true
+            length: 65535
+        video_text19:
+            type: text
+            nullable: true
+            length: 65535
+        video_text20:
+            type: text
+            nullable: true
+            length: 65535
+        video_comment:
+            type: text
+            nullable: true
+            length: 65535
+        video_file:
+            type: text
+            nullable: true
+            length: 65535
+        video_userid:
+            type: text
+            nullable: true
+            length: 65535
+        video_userpass:
+            type: text
+            nullable: true
+            length: 65535
+    manyToOne:
+        Creator:
+            targetEntity: Eccube\Entity\Member
+            joinColumn:
+                name: creator_id
+                referencedColumnName: member_id
+                nullable: false
+        Status:
+            targetEntity: Eccube\Entity\Master\Disp
+            joinColumn:
+                name: status
+                referencedColumnName: id
+                default: 2
+    oneToMany:
+        ProductCategories:
+            targetEntity: Eccube\Entity\ProductCategory
+            cascade: ["persist", "remove"]
+            mappedBy: Product
+        ProductClasses:
+            targetEntity: Eccube\Entity\ProductClass
+            cascade: ["persist"]
+            mappedBy: Product
+        ProductImage:
+            targetEntity: Eccube\Entity\ProductImage
+            mappedBy: Product
+            orderBy:
+                rank: ASC
+        ProductTag:
+            targetEntity: Eccube\Entity\ProductTag
+            mappedBy: Product
+        CustomerFavoriteProducts:
+            targetEntity: Eccube\Entity\CustomerFavoriteProduct
+            mappedBy: Product
+    lifecycleCallbacks: {  }

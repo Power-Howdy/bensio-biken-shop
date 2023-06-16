@@ -1,0 +1,3 @@
+{% block main %}
+    <li class="{% if mypageno|default('') == 'card' %}active{% endif %}"><a{% if mypageno|default('') != 'card' %} href="{{ url('paylite_mypage_credit_card_index') }}"{% endif %}>カード編集</a></li>
+{% endblock %}

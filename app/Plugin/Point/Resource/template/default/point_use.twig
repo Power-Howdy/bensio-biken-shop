@@ -1,0 +1,52 @@
+{#
+/*
+* This file is part of EC-CUBE
+*
+* Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+* http://www.lockon.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+#}
+{% extends 'default_frame.twig' %}
+
+{% block main %}
+    <h1 class="page-heading">利用ポイントの設定</h1>
+    <div id="detail_wrap" class="container-fluid">
+        <div id="detail_box" class="row">
+            <form method="post" action="{{ url('point_use') }}">
+                {{ form_widget(form._token) }}
+                <div id="detail_box__body" class="col-sm-10 col-sm-offset-1">
+                    <div class="row  text-center">
+                        <p class="col-sm-10">
+                            1ポイントを<span class="text-primary">{{ pointRate|price }}</span>として利用する事ができます。<br>
+                            利用する場合は、以下のボックスにポイント数を入力してください。
+                        </p>
+                        <p class="col-sm-10">
+                            今回のご購入合計金額 は<span class="text-primary">{{ total|price }} </span>(送料、手数料込)です。<br>
+                            現在の保有ポイントは「<span class="text-primary">{{ currentPoint >= 0 ? currentPoint|number_format  : 0 }} pt</span>」です。{% if currentPoint >= 0 %}「<span class="text-primary">{{ maxUsePoint|number_format }} pt</span>」までご利用いただけます。{% endif %}
+                        </p>
+                    </div>
+                    <div id="detail_box__body_inner" class="dl_table">
+                        <dl>
+                            <dt id="detail_box__name">今回のお買い物で、</dt>
+                            <dd class="form-group input_name">
+                                {{ form_widget(form.plg_use_point) }}<span> ptを利用する。</span><br>
+                                {{ form_errors(form.plg_use_point) }}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="detail_box__button_menu" class="row no-padding">
+                        <div class="btn_group col-sm-offset-4 col-sm-4">
+                            <p id="detail_box__insert_button">
+                                <button type="submit" class="btn btn-primary btn-block prevention-btn prevention-mask">ポイントを利用する</button>
+                            </p>
+                            <p id="detail_box__back_button"><a href="{{ url('shopping') }}" class="btn btn-info btn-block">戻る</a></p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

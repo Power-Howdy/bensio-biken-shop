@@ -1,0 +1,10 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<td id="result_list_main__order_epsilon_status-">
+    {% set id = Order.id %}
+    {% if arrEpsilonStatus[id] is defined %}
+        {{ arrEpsilonStatus[id]['name'] }}
+        {% if Order.payment_method == virtual_account and arrEpsilonStatus[id]['id'] == payment_status_id %}
+            <i class="fa fa-exclamation-circle text-secondary" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="入金金額はイプシロン管理画面よりご確認ください"></i>
+        {% endif %}
+    {% endif %}
+</td>

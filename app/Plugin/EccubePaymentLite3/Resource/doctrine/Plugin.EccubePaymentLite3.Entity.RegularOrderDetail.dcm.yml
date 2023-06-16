@@ -1,0 +1,76 @@
+Plugin\EccubePaymentLite3\Entity\RegularOrderDetail:
+    type: entity
+    table: plg_paylite_regular_order_detail
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\RegularOrderDetailRepository
+    indexes:
+        dtb_order_detail_product_id_key:
+            columns:
+                - product_id
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: regular_order_detail_id
+            generator:
+                strategy: AUTO
+    fields:
+        product_name:
+            type: text
+            nullable: false
+        product_code:
+            type: text
+            nullable: true
+        class_name1:
+            type: text
+            nullable: true
+        class_name2:
+            type: text
+            nullable: true
+        class_category_name1:
+            type: text
+            nullable: true
+        class_category_name2:
+            type: text
+            nullable: true
+        price:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        quantity:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        tax_rate:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        tax_rule:
+            type: smallint
+            nullable: true
+            unsigned: false
+    manyToOne:
+        RegularOrder:
+            targetEntity: Plugin\EccubePaymentLite3\Entity\RegularOrder
+            inversedBy: RegularOrderDetails
+            joinColumn:
+                name: regular_order_id
+                referencedColumnName: regular_order_id
+                nullable: false
+        Product:
+            targetEntity: Eccube\Entity\Product
+            joinColumn:
+                name: product_id
+                referencedColumnName: product_id
+                nullable: false
+        ProductClass:
+            targetEntity: Eccube\Entity\ProductClass
+            joinColumn:
+                name: product_class_id
+                referencedColumnName: product_class_id
+                nullable: false
+    lifecycleCallbacks: {  }

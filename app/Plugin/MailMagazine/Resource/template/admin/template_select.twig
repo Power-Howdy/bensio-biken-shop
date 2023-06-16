@@ -1,0 +1,101 @@
+{#
+ This file is part of EC-CUBE
+
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ https://www.ec-cube.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+
+{#
+[メルマガ管理]-[配信内容設定]-[テンプレート選択]画面
+#}
+
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['mailmagazine', 'mailmagazine'] %}
+
+{% block title %}メルマガ管理{% endblock %}
+{% block sub_title %}配信{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+    <script>
+        $(function(){
+            $("#mail_magazine_template").on("change", function(){
+                var id = $(this).val()
+                if (id) {
+                    action= '{{ url('plugin_mail_magazine_select') }}/' + id;
+                } else {
+                    action= '{{ url('plugin_mail_magazine_select') }}';
+                }
+
+                $('#mode').val('select');
+
+                document.form1.action = action;
+                document.form1.submit();
+            });
+        });
+
+        function changeAction(action) {
+            document.form1.action = action;
+            document.form1.submit();
+        }
+
+    </script>
+{% endblock javascript%}
+
+{% block main %}
+    <form name="form1" role="form" class="form-horizontal" id="form1" method="post" action="">
+    {{ form_widget(form._token) }}
+    <input id="mode" type="hidden" name="mode">
+    <div class="row" id="aside_wrap">
+        <div id="detail_wrap" class="col-md-9">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">配信内容の設定</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+
+                    {{ form_row(form.template) }}
+                    {{ form_row(form.subject) }}
+                    {{ form_row(form.body, {'attr' : { 'rows' : 20 }}) }}
+                    {{ form_row(form.htmlBody, {'attr' : { 'rows' : 20 }}) }}
+
+                    <div style="display: none">
+                        {{ form_rest(form) }}
+                    </div>
+                    <span class="help-block">※ 名前差し込み時は {name} といれてください</span>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+
+            <div id="detail_box__footer" class="row hidden-xs hidden-sm">
+                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                    <p><a href="{{ url('plugin_mail_magazine') }}" onclick="changeAction('{{ url('plugin_mail_magazine') }}'); return false;">検索画面に戻る</a></p>
+                </div>
+            </div>
+        </div>
+        <div id="common_box" class="col-md-3">
+            {# 登録ボタン #}
+            <div class="col_inner" id="aside_column">
+                <div class="box no-header">
+                    <div class="box-body">
+                        <div class="row text-center">
+                            <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                <button class="btn btn-primary btn-block btn-lg" onclick="changeAction('{{ url('plugin_mail_magazine_confirm') }}/' + document.form1.mail_magazine_template.value); return false;">確認画面へ</button>
+                            </div>
+                        </div>
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+        </div>
+    </div>
+    </form>
+
+
+
+
+{% endblock %}

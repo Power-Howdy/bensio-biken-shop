@@ -1,0 +1,37 @@
+Plugin\EccubePaymentLite3\Entity\EpsilonMember:
+    type: entity
+    table: plg_paylite_member
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\EpsilonMemberRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: id
+            generator:
+                strategy: AUTO
+    fields:
+        customer_id:
+            type: integer
+            nullable: false
+        gmo_epsilon_credit_card_expiration_date:
+            type: datetime
+            nullable: true
+        card_change_request_mail_send_date:
+            type: datetime
+            nullable: true
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    oneToOne:
+        Customer:
+            targetEntity: Eccube\Entity\Customer
+            joinColumn:
+                name: customer_id
+                referencedColumnName: customer_id
+                nullable: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,4 @@
+point_status_id,order_id,customer_id,status,del_flg,point_fix_date
+1,7,1,1,0,"2021-05-20 17:19:28"
+2,8,1,0,0,
+3,9,1,0,0,

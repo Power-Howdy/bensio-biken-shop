@@ -1,0 +1,19 @@
+Eccube\Entity\Master\Db:
+    type: entity
+    table: mtb_db
+    repositoryClass: Eccube\Repository\Master\DbRepository
+    id:
+        id:
+            type: smallint
+            nullable: false
+            unsigned: false
+            id: true
+    fields:
+        name:
+            type: text
+            nullable: true
+        rank:
+            type: smallint
+            nullable: false
+            unsigned: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,56 @@
+Eccube\Entity\Plugin:
+    type: entity
+    table: dtb_plugin
+    repositoryClass: Eccube\Repository\PluginRepository
+
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: plugin_id
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: text
+            nullable: false
+        code:
+            type: text
+            nullable: false
+        class_name:
+            type: text
+        enable:
+            type: smallint
+            nullable: false
+            unsigned: false
+            options:
+                default: 0
+            column: plugin_enable
+        del_flg:
+            type: smallint
+            nullable: false
+            options:
+                default: 0
+        version:
+            type: string
+            nullable: false
+        source:
+            type: text
+            nullable: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+
+    oneToMany:
+        PluginEventHandlers:
+            targetEntity: \Eccube\Entity\PluginEventHandler
+            mappedBy: Plugin
+            cascade: ["persist", "remove"]
+
+
+    lifecycleCallbacks: {  }

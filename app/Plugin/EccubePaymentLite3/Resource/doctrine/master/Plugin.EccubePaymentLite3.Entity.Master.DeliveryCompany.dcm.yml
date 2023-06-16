@@ -1,0 +1,19 @@
+Plugin\EccubePaymentLite3\Entity\Master\DeliveryCompany:
+  type: entity
+  table: plg_paylite_delivery_company
+  repositoryClass: Plugin\EccubePaymentLite3\Repository\Master\DeliveryCompanyRepository
+  id:
+    id:
+      type: smallint
+      nullable: false
+      unsigned: false
+      id: true
+  fields:
+    name:
+      type: text
+      nullable: true
+    rank:
+      type: smallint
+      nullable: false
+      unsigned: false
+  lifecycleCallbacks: {  }

@@ -1,0 +1,9 @@
+name: EC-CUBE4系移行用バックアッププラグイン(3.0系)
+code: DataBackup3
+version: 1.0.0
+# orm.path:
+#     - /Resource/doctrine
+# migration.path:
+#     - /migration
+service:
+    - DataBackup3ServiceProvider

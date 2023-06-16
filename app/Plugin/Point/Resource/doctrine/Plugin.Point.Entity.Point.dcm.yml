@@ -1,0 +1,66 @@
+Plugin\Point\Entity\Point:
+    type: entity
+    table: plg_point
+    repositoryClass: Plugin\Point\Repository\PointRepository
+    id:
+        plg_point_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        plg_dynamic_point:
+            type: integer
+            nullable: false
+            unsigned: false
+        order_id:
+            type: integer
+            nullable: true
+            unsigned: false
+        customer_id:
+            type: integer
+            nullable: false
+            unsigned: false
+        plg_point_type:
+            type: smallint
+            nullable: false
+            unsigned: false
+        plg_point_action_name:
+            type: string
+            length: 255
+            nullable: true
+        plg_point_info_id:
+            type: integer
+            nullable: false
+            unsigned: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    manyToOne:
+        Order:
+            targetEntity: Eccube\Entity\Order
+            joinColumn:
+                name: order_id
+                referencedColumnName: order_id
+        Customer:
+            targetEntity: Eccube\Entity\Customer
+            joinColumn:
+                name: customer_id
+                referencedColumnName: customer_id
+        PointInfo:
+            targetEntity: Plugin\Point\Entity\PointInfo
+            joinColumn:
+                name: plg_point_info_id
+                referencedColumnName: plg_point_info_id
+        PointProductRate:
+            targetEntity: Plugin\Point\Entity\PointProductRate
+            joinColumn:
+                name: plg_point_product_rate_id
+                referencedColumnName: plg_point_product_rate_id
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

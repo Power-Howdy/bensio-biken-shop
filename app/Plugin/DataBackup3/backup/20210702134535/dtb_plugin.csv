@@ -1,0 +1,7 @@
+plugin_id,name,code,class_name,plugin_enable,del_flg,version,source,create_date,update_date
+1,新着商品ブロックプラグイン,Shiro8NewProductBlock3,,1,0,1,0,"2021-05-12 14:47:54","2021-05-12 14:48:05"
+2,ギャラリーブロックプラグイン,Shiro8GallaryBlock3,Shiro8GallaryBlock3Event,1,0,1.1,0,"2021-05-12 15:42:37","2021-05-12 15:42:52"
+3,Coupon,Coupon,Event,1,0,2.0.1,0,"2021-05-17 15:36:20","2021-05-17 15:36:26"
+4,Pointプラグイン,Point,PointEvent,1,0,1.0.0,0,"2021-05-17 15:48:09","2021-05-17 15:48:13"
+5,会員プロフィール,Profile,,0,1,1.0.0,0,"2021-05-18 10:46:55","2021-07-02 11:06:14"
+6,EC-CUBE4系移行用バックアッププラグイン(3.0系),DataBackup3,,1,0,1.0.0,0,"2021-07-02 11:06:47","2021-07-02 11:06:53"

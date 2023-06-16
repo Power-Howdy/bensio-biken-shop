@@ -1,0 +1,30 @@
+Plugin\EccubePaymentLite3\Entity\Extension\PaymentExtension:
+    type: entity
+    table: plg_paylite_payment_extension
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\Extension\PaymentExtensionRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: payment_id
+    fields:
+        method:
+            type: text
+            nullable: true
+            column: payment_method
+        payment_type_id:
+            type: integer
+            nullable: false
+        st_code:
+            type: text
+            nullable: true
+        mission_code:
+            type: text
+            nullable: true
+        plugin_code:
+            type: text
+            nullable: true
+
+    lifecycleCallbacks: {  }

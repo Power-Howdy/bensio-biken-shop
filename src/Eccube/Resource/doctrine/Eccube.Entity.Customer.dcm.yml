@@ -1,0 +1,185 @@
+Eccube\Entity\Customer:
+    type: entity
+    table: dtb_customer
+    repositoryClass: Eccube\Repository\CustomerRepository
+    uniqueConstraints:
+        secret_key:
+            columns:
+                - secret_key
+    indexes:
+        # requires a length on MySQL
+        # dtb_customer_email_idx:
+        #     columns:
+        #         - email
+        dtb_customer_create_date_idx:
+            columns:
+                - create_date
+        dtb_customer_update_date_idx:
+            columns:
+                - update_date
+        dtb_customer_last_buy_date_idx:
+            columns:
+                - last_buy_date
+        dtb_customer_buy_times_idx:
+            columns:
+                - buy_times
+        dtb_customer_buy_total_idx:
+            columns:
+                - buy_total
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: customer_id
+            generator:
+                strategy: AUTO
+    fields:
+        name01:
+            type: text
+            nullable: false
+        name02:
+            type: text
+            nullable: false
+        kana01:
+            type: text
+            nullable: true
+        kana02:
+            type: text
+            nullable: true
+        company_name:
+            type: text
+            nullable: true
+        zip01:
+            type: text
+            nullable: true
+        zip02:
+            type: text
+            nullable: true
+        zipcode:
+            type: text
+            nullable: true
+        addr01:
+            type: text
+            nullable: true
+        addr02:
+            type: text
+            nullable: true
+        email:
+            type: text
+            nullable: false
+        tel01:
+            type: text
+            nullable: true
+        tel02:
+            type: text
+            nullable: true
+        tel03:
+            type: text
+            nullable: true
+        fax01:
+            type: text
+            nullable: true
+        fax02:
+            type: text
+            nullable: true
+        fax03:
+            type: text
+            nullable: true
+        lineid:
+            type: text
+            nullable: true
+        birth:
+            type: datetime
+            nullable: true
+        password:
+            type: text
+            nullable: true
+        salt:
+            type: text
+            nullable: true
+        secret_key:
+            type: string
+            length: 200
+            nullable: false
+        first_buy_date:
+            type: datetime
+            nullable: true
+        last_buy_date:
+            type: datetime
+            nullable: true
+        buy_times:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        buy_total:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        note:
+            type: text
+            nullable: true
+        reset_key:
+            type: text
+            nullable: true
+        reset_expire:
+            type: datetime
+            nullable: true
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            options:
+                default: '0'
+    manyToOne:
+        Status:
+            targetEntity: Eccube\Entity\Master\CustomerStatus
+            joinColumn:
+                name: status
+                referencedColumnName: id
+        Sex:
+            targetEntity: Eccube\Entity\Master\Sex
+            joinColumn:
+                name: sex
+                referencedColumnName: id
+        Job:
+            targetEntity: Eccube\Entity\Master\Job
+            joinColumn:
+                name: job
+                referencedColumnName: id
+        Country:
+            targetEntity: Eccube\Entity\Master\Country
+            joinColumn:
+                name: country_id
+                referencedColumnName: id
+        Pref:
+            targetEntity: Eccube\Entity\Master\Pref
+            joinColumn:
+                name: pref
+                referencedColumnName: id
+    oneToMany:
+        CustomerFavoriteProducts:
+            targetEntity: Eccube\Entity\CustomerFavoriteProduct
+            mappedBy: Customer
+        CustomerAddresses:
+            targetEntity: Eccube\Entity\CustomerAddress
+            mappedBy: Customer
+            orderBy:
+                id: ASC
+        Orders:
+            targetEntity: Eccube\Entity\Order
+            mappedBy: Customer
+    lifecycleCallbacks: {  }

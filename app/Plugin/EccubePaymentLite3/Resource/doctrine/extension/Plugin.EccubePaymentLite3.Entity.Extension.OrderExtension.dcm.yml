@@ -1,0 +1,33 @@
+Plugin\EccubePaymentLite3\Entity\Extension\OrderExtension:
+    type: entity
+    table: plg_paylite_order_extension
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\Extension\OrderExtensionRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: order_id
+    fields:
+        trans_code:
+            type: text
+            nullable: true
+        regular_order_id:
+            type: integer
+            nullable: true
+        payment_info:
+            type: text
+            nullable: true
+        gmo_epsilon_order_no:
+            type: text
+            nullable: true
+
+    manyToOne:
+        PaymentStatus:
+            targetEntity: Plugin\EccubePaymentLite3\Entity\Master\PaymentStatus
+            joinColumn:
+                name: payment_status_id
+                referencedColumnName: id
+
+    lifecycleCallbacks: {  }

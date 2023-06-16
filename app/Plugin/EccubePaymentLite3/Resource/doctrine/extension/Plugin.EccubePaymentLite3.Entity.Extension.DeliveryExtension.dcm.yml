@@ -1,0 +1,20 @@
+Plugin\EccubePaymentLite3\Entity\Extension\DeliveryExtension:
+  type: entity
+  table: plg_paylite_delivery_extension
+  repositoryClass: Plugin\EccubePaymentLite3\Repository\Extension\DeliveryExtensionRepository
+  id:
+    id:
+      type: integer
+      nullable: false
+      unsigned: false
+      id: true
+      column: delivery_id
+
+  manyToOne:
+    DeliveryCompany:
+      targetEntity: Plugin\EccubePaymentLite3\Entity\Master\DeliveryCompany
+      joinColumn:
+        name: delivery_company_id
+        referencedColumnName: id
+
+  lifecycleCallbacks: {  }

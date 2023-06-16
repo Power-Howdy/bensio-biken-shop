@@ -1,0 +1,11 @@
+database:
+    driver: 'pdo_mysql'
+    host: 'localhost'
+    dbname: 'wp614605_ec1'
+    port: ''
+    user: 'wp614605_ax4qe8'
+    password : 'fk7bsgLwYVY6'
+    charset: utf8
+    defaultTableOptions: { collate: utf8_general_ci }
+
+

@@ -1,0 +1,19 @@
+Plugin\Shiro8GallaryBlock3\Entity\Shiro8ProductGallary:
+    type: entity
+    table: plg_shiro8_product_gallary
+    repositoryClass: Plugin\Shiro8GallaryBlock3\Repository\Shiro8ProductGallaryRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: product_id
+            generator:
+                strategy: NONE
+    fields:
+        useFlg:
+            type: integer
+            nullable: true
+            column: use_flg
+    lifecycleCallbacks: {  }

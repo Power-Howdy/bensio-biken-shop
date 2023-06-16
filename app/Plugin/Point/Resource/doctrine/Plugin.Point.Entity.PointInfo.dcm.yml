@@ -1,0 +1,38 @@
+Plugin\Point\Entity\PointInfo:
+    type: entity
+    table: plg_point_info
+    repositoryClass: Plugin\Point\Repository\PointInfoRepository
+    id:
+        plg_point_info_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        plg_add_point_status:
+            type: smallint
+            nullable: false
+        plg_basic_point_rate:
+            type: integer
+            unsigned: false
+            nullable: false
+        plg_point_conversion_rate:
+            type: integer
+            unsigned: false
+            nullable: false
+        plg_round_type:
+            type: smallint
+            nullable: false
+        plg_calculation_type:
+            type: smallint
+            nullable: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

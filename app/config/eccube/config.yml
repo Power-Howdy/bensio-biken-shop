@@ -1,0 +1,13 @@
+auth_magic: s6Q5GkEKfwp13TOXDmBRVoTQ4ghVZ68d
+password_hash_algos: sha256
+shop_name: 美健ショップテスト
+force_ssl: null
+admin_allow_host: {  }
+cookie_lifetime: 0
+cookie_name: eccube
+locale: ja
+timezone: Asia/Tokyo
+pageinrange: false
+trusted_proxies_connection_only: false
+trusted_proxies: {  }
+eccube_install: 1

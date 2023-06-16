@@ -1,0 +1,195 @@
+{#
+ This file is part of EC-CUBE
+
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ https://www.ec-cube.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['mailmagazine', 'mailmagazine_history'] %}
+
+{% block title %}メルマガ管理{% endblock %}
+{% block sub_title %}配信履歴{% endblock %}
+
+{% block javascript %}
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
+
+<script>
+function fnDelete(action) {
+    if (confirm('この履歴を削除してもよろしいですか？')) {
+        document.form1.action = action;
+        document.form1.submit();
+    }
+}
+function changeAction(action) {
+    document.form1.action = action;
+    document.form1.submit();
+}
+function sendMail(id, offset, token) {
+    $.post('{{ url('plugin_mail_magazine_commit') }}', { id : id, offset: offset || 0, _token:token })
+        .done(function(res) {
+            $('#send-progress').css('width', (res.count / res.total * 100) + '%');
+            $('#send-status-message').text(res.count + ' / ' + res.total + ' 件処理完了');
+            if (res.count < res.total) {
+                sendMail(id, res.count);
+            } else {
+                $('.modal-title').text('送信完了');
+                $('#send-progress').removeClass('progress-bar-striped active');
+                $('.modal-footer').show();
+            }
+        })
+        .fail(function() {
+            alert('エラーが発生しました。');
+        });
+}
+$(function () {
+    var lock = false;
+    $('.retry-btn').click(function(e) {
+        e.preventDefault();
+        if (!lock && confirm('配信失敗と未配信のメールを再送します。\nよろしいですか？')) {
+            lock = true;
+            $('#sendModal').modal('show');
+            var id = $(this).data('id');
+            $.post('{{ url('plugin_mail_magazine_history_retry') }}?id=' + id)
+                .done(function() { sendMail(id, 0); })
+                .fail(function() { alert('エラーが発生しました。'); });
+        }
+        return false;
+    });
+    $('#sendModal').on('show.bs.modal', function () {
+        $('.modal-title').text('送信中...');
+        $('#send-progress').addClass('progress-bar-striped active');
+        $('#send-status-message').text('');
+    });
+    $('#sendModal .btn-close').on('click', function() {
+        location.reload(true);
+    });
+    {% if app.session.flashBag.has('eccube.plugin.mailmagazine.history') %}
+    $('#sendModal').modal('show');
+    sendMail({{ app.session.flashBag.get('eccube.plugin.mailmagazine.history')[0] }}, 0);
+    {% endif %}
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+})
+</script>
+{% endblock %}
+
+{% block main %}
+<form name="form1" id="form1" method="post" action="">
+
+<input type="hidden" name="{{ constant('Eccube\\Common\\Constant::TOKEN_NAME') }}" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
+{% if pagination %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                {% if pagination and pagination.totalItemCount > 0 %}
+                    <div class="box-header with-arrow">
+                        <h3 class="box-title">総件数 <span class="normal"><strong>{{ pagination.totalItemCount }} 件</strong> </span></h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="table_list">
+                            <div class="table-responsive with-border">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th width="170px">配信開始時刻</th>
+                                            <th width="170px">配信終了時刻</th>
+                                            <th>件名</th>
+                                            <th width="120px">配信総数</th>
+                                            <th width="120px">配信済数</th>
+                                            <th width="120px">配信失敗数</th>
+                                            <th width="120px">未配信数</th>
+                                            <th width="120px">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for SendHistory in pagination %}
+                                        <tr>
+                                            <td class="">{{ SendHistory.start_date|date("Y/m/d H:i") }}</td>
+                                            <td class="">
+                                                {% if SendHistory.end_date is not null %}
+                                                    {{ SendHistory.end_date|date("Y/m/d H:i") }}
+                                                {% endif %}
+                                            </td>
+                                            <td class="">{{ SendHistory.subject}}</td>
+                                            <td class="text-right">{{ SendHistory.send_count }}</td>
+                                            <td class="text-right">{{ SendHistory.complete_count }}</td>
+                                            <td class="text-right">{{ SendHistory.error_count }}</td>
+                                            <td class="text-right">{{ SendHistory.send_count - SendHistory.complete_count }}</td>
+                                            <td class="icon_edit">
+                                                <div class="dropdown">
+                                                    <a class="dropdown-toggle" data-toggle="dropdown"><svg class="cb cb-ellipsis-h"> <use xlink:href="#cb-ellipsis-h" /></svg></a>
+                                                    <ul id="result_list_main__menu--{{ SendHistory.id }}" class="dropdown-menu dropdown-menu-right">
+                                                        <li>
+                                                            <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_preview', { id: SendHistory.id }) }}'); return false;">プレビュー</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_history_condition', { id: SendHistory.id }) }}'); return false;">配信条件</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="{{ url('plugin_mail_magazine_history_result', { id: SendHistory.id }) }}">配信結果</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_history_delete', { id: SendHistory.id }) }}'); return false;">削除</a>
+                                                        </li>
+                                                        {% if SendHistory.error_count > 0 or (SendHistory.send_count - SendHistory.complete_count) > 0 %}
+                                                        <li>
+                                                            <a href="#" class="retry-btn" data-id="{{ SendHistory.id }}">再試行</a>
+                                                        </li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'plugin_mail_magazine_history' } %}
+                    </div><!-- /.box-body -->
+                {% else %}
+                    {# データがない場合 #}
+                    <div class="box-header with-arrow">
+                        <h3 class="box-title">該当するデータがありませんでした。</h3>
+                    </div><!-- /.box-header -->
+                {% endif %}
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div>
+
+{% else %}
+    <div class="box-header with-arrow">
+        <h3 class="box-title">検索条件に該当するデータがありませんでした。</h3>
+    </div><!-- /.box-header -->
+{% endif %}
+</form>
+
+{% endblock %}
+{% block modal %}
+<div id="sendModal" class="modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">送信中...</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div id="send-progress" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                </div>
+                <div id="send-status-message"></div>
+            </div>
+            <div class="modal-footer" style="display: none;">
+                <button type="button" class="btn btn-default btn-close">閉じる</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

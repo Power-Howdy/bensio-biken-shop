@@ -1,0 +1,60 @@
+eccube.event.render.shopping.before:
+    - [onRenderShoppingBefore, NORMAL]
+eccube.event.render.shopping_complete.before:
+    - [onRenderShoppingCompleteBefore, NORMAL]
+eccube.event.render.admin_order_edit.before:
+    - [onRenderAdminOrderEditBefore, NORMAL]
+
+eccube.event.controller.shopping_confirm.before:
+    - [onControllerShoppingConfirmBefore, NORMAL]
+eccube.event.controller.admin_order_edit.before:
+    - [onControllerAdminOrderEditBefore, NORMAL]
+# Mypage events
+eccube.event.render.mypage.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_change.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_change_complete.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_delivery.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_delivery_new.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_delivery_edit.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_favorite.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_history.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_mail_view.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_order.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.mypage_withdraw.before:
+    - [onRenderMypageBefore, NORMAL]
+eccube.event.render.gmo_epsilon_mypage_credit_card_index.before:
+    - [onRenderMypageBefore, NORMAL]
+
+# Admin Order
+Admin/Order/edit.twig:
+    - [onAdminOrderEditRender, NORMAL]
+admin.order.edit.index.complete:
+    - [onAdminOrderEditComplete, NORMAL]
+
+Admin/Order/index.twig:
+    - [onRenderAdminOrder, NORMAL]
+# Admin Order
+Admin/Setting/Shop/delivery_edit.twig:
+    - [onAdminSettingShopDeliveryEditRender, NORMAL]
+admin.setting.shop.delivery.edit.complete:
+    - [onAdminSettingShopDeliveryEditComplete, NORMAL]
+
+# Admin Product
+Admin/Product/product.twig:
+    - [onAdminProductEditRender, NORMAL]
+admin.product.edit.complete:
+    - [onAdminProductEditComplete, NORMAL]
+
+# Shopping
+Shopping/login.twig:
+    - [onShoppingLoginRender, NORMAL]

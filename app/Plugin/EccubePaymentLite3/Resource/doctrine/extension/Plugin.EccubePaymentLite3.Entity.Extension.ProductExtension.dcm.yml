@@ -1,0 +1,28 @@
+Plugin\EccubePaymentLite3\Entity\Extension\ProductExtension:
+    type: entity
+    table: plg_paylite_product_extension
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\Extension\ProductExtensionRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+            column: id
+    fields:
+        product_id:
+            type: integer
+            nullable: true
+        free_description_quantity:
+            type: text
+            nullable: true
+        free_description_selling_price:
+            type: text
+            nullable: true
+        free_description_payment_delivery:
+            type: text
+            nullable: true
+
+    lifecycleCallbacks: {  }

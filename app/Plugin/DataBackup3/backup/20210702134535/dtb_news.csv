@@ -1,0 +1,3 @@
+news_id,creator_id,news_date,rank,news_title,news_comment,news_url,news_select,link_method,create_date,update_date,del_flg
+1,1,"2021-05-01 00:00:00",1,美健ショップモールの運用テスト中です。,"現在、美健ショップモールの運用テストを行っております。
+まもなく本運用開始致しますので、少々お待ちください。",,0,0,"2021-04-20 16:22:50","2021-05-06 14:12:40",0

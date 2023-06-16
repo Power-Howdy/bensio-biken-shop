@@ -1,0 +1,18 @@
+<script>
+    $(function(){
+        $('#complete_payment_box__payment_method').appendTo($('#payment_info_box__body'));
+
+        $('#register_gmo_epsilon_credit_card_btn').on('click', function() {
+            location.href = '{{ url('paylite_create_reg_credit_order', {id: Order.id}) }}';
+        });
+    });
+</script>
+
+<div style="display: none;">
+    <dl id="complete_payment_box__payment_method" class="dl-horizontal">
+        <dt>登録済みクレジットカード決済登録</dt>
+        <dd class="form-group form-inline">
+            <a class="btn btn-default" data-toggle="modal" data-target="#completePaymentBtn">決済を登録する</a>
+        </dd>
+    </dl>
+</div>

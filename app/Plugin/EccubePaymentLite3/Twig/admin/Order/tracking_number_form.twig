@@ -1,0 +1,21 @@
+<script>
+    $(function(){
+        {% for shippingForm in form.Shippings %}
+        {% set shippingIndex = shippingForm.vars.name %}
+        $('#shipment_item_detail__tracking_number--{{ shippingIndex }}').appendTo($('#shipment_item_detail--{{ shippingIndex }}'));
+        {% endfor %}
+    });
+</script>
+
+<div style="display: none;" id="asdasdasdasdas">
+    {% for shippingForm in form.Shippings %}
+    {% set shippingIndex = shippingForm.vars.name %}
+    <div id="shipment_item_detail__tracking_number--{{ shippingIndex }}" class="form-group">
+        {{ form_label(shippingForm.tracking_number) }}
+        <div class="col-sm-9 col-lg-10">
+            {{ form_widget(shippingForm.tracking_number, {'attr': {'style': 'width:auto'}}) }}
+            {{ form_errors(shippingForm.tracking_number) }}
+        </div>
+    </div>
+    {% endfor %}
+</div>

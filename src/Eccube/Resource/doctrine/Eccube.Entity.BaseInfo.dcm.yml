@@ -1,0 +1,167 @@
+Eccube\Entity\BaseInfo:
+    type: entity
+    table: dtb_base_info
+    repositoryClass: Eccube\Repository\BaseInfoRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        company_name:
+            type: text
+            nullable: true
+        company_kana:
+            type: text
+            nullable: true
+        zip01:
+            type: text
+            nullable: true
+        zip02:
+            type: text
+            nullable: true
+        zipcode:
+            type: text
+            nullable: true
+        addr01:
+            type: text
+            nullable: true
+        addr02:
+            type: text
+            nullable: true
+        tel01:
+            type: text
+            nullable: true
+        tel02:
+            type: text
+            nullable: true
+        tel03:
+            type: text
+            nullable: true
+        fax01:
+            type: text
+            nullable: true
+        fax02:
+            type: text
+            nullable: true
+        fax03:
+            type: text
+            nullable: true
+        business_hour:
+            type: text
+            nullable: true
+        receipt_number:
+            type: text
+            nullable: true
+        receipt_logo:
+            type: text
+            nullable: true
+            options:
+                default: logo.png
+        email01:
+            type: text
+            nullable: true
+        email02:
+            type: text
+            nullable: true
+        email03:
+            type: text
+            nullable: true
+        email04:
+            type: text
+            nullable: true
+        shop_name:
+            type: text
+            nullable: true
+        shop_kana:
+            type: text
+            nullable: true
+        shop_name_eng:
+            type: text
+            nullable: true
+        update_date:
+            type: datetime
+            nullable: false
+        good_traded:
+            type: text
+            nullable: true
+        message:
+            type: text
+            nullable: true
+        latitude:
+            type: text
+            nullable: true
+        longitude:
+            type: text
+            nullable: true
+        delivery_free_amount:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+            options:
+                default: null
+        delivery_free_quantity:
+            type: integer
+            nullable: true
+            options:
+                default: null
+        option_multiple_shipping:
+            type: smallint
+            nullable: true
+            options:
+                default: 0
+        option_mypage_order_status_display:
+            type: smallint
+            nullable: true
+            options:
+                default: 1
+        nostock_hidden:
+            type: smallint
+            nullable: true
+            options:
+                default: 0
+        option_favorite_product:
+            type: smallint
+            nullable: true
+            options:
+                default: 1
+        option_product_delivery_fee:
+            type: smallint
+            nullable: true
+            options:
+                default: 0
+        option_product_tax_rule:
+            type: smallint
+            nullable: true
+            options:
+                default: 0
+        option_customer_activate:
+            type: smallint
+            nullable: true
+            options:
+                default: 1
+        option_remember_me:
+            type: smallint
+            nullable: true
+            options:
+                default: 0
+        authentication_key:
+            type: text
+            nullable: true
+    manyToOne:
+        Country:
+            targetEntity: Eccube\Entity\Master\Country
+            joinColumn:
+                name: country_id
+                referencedColumnName: id
+        Pref:
+            targetEntity: Eccube\Entity\Master\Pref
+            joinColumn:
+                name: pref
+                referencedColumnName: id
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

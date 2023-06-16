@@ -1,0 +1,17 @@
+<div class="box accordion">
+    <div class="box-header toggle active">
+        <h3 class="box-title">定期課金情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+    </div><!-- /.box-header -->
+    <div class="box-body accpanel" style="display: block;">
+        <div class="order_list form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-3 col-lg-2">定期受注番号</div>
+                <div class="col-sm-9 col-lg-10">{{ RegularOrder.id }}</div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3 col-lg-2">定期課金金額</div>
+                <div class="col-sm-9 col-lg-10">{{ RegularOrder.payment_total|price }}</div>
+            </div>
+        </div>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->

@@ -1,0 +1,72 @@
+Plugin\ReceiptPdf\Entity\ReceiptPdf:
+    type: entity
+    table: plg_receipt_pdf
+    repositoryClass: Plugin\ReceiptPdf\Repository\ReceiptPdfRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: member_id
+    fields:
+        title:
+            type: string
+            length: 50
+            nullable: true
+        message1:
+            type: string
+            length: 30
+            nullable: true
+        message2:
+            type: string
+            length: 30
+            nullable: true
+        message3:
+            type: string
+            length: 30
+            nullable: true
+        note1:
+            type: string
+            length: 50
+            nullable: true
+        note2:
+            type: string
+            length: 50
+            nullable: true
+        note3:
+            type: string
+            length: 50
+            nullable: true
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            options:
+                default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+        catalog_detail:
+            type: string
+            length: 30
+            nullable: true
+        specification_flg:
+            type: boolean
+            nullable: true
+        receipt_flg:
+            type: boolean
+            nullable: true
+        detail_flg:
+            type: boolean
+            nullable: true
+        address_name_flg:
+            type: boolean
+            nullable: true
+            options:
+                default: '1'
+
+    lifecycleCallbacks: {  }

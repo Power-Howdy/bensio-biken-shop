@@ -1,0 +1,6 @@
+admin.plugin.receipt_pdf.parameter.notfound: 注文番号がありません。
+admin.plugin.receipt_pdf.download.failure: ダウンロード失敗!
+admin.plugin.receipt_pdf.title.default: お買上げ明細書(納品書)
+admin.plugin.receipt_pdf.message1.default: このたびはお買上げいただきありがとうございます。
+admin.plugin.receipt_pdf.message2.default: 下記の内容にて納品させていただきます。
+admin.plugin.receipt_pdf.message3.default: ご確認くださいますよう、お願いいたします。

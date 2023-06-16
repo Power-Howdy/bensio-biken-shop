@@ -1,0 +1,2 @@
+tax_rule_id,product_class_id,creator_id,country_id,pref_id,product_id,calc_rule,tax_rate,tax_adjust,apply_date,del_flg,create_date,update_date
+1,,1,,,,1,8,0,"2021-04-20 16:22:50",0,"2021-04-20 16:22:50","2021-04-20 16:22:50"

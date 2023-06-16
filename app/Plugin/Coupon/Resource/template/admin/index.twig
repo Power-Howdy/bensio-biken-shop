@@ -1,0 +1,111 @@
+{#
+ This file is part of the Coupon plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['order', 'plugin_coupon'] %}
+
+{% block title %}クーポン管理{% endblock %}
+{% block sub_title %}クーポン内容設定{% endblock %}
+
+{% block main %}
+<form name="search_form" id="search_form" method="post" action="">
+    {{ form_widget(searchForm._token) }}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-arrow">
+                    <h3 class="box-title"><span class="normal"><strong>{{ totalItemCount }} 件</strong> が該当しました</span></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="table_list">
+                        <div class="table-responsive with-border">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>クーポンID</th>
+                                    <th>クーポンコード</th>
+                                    <th>クーポン名</th>
+                                    <th>種別</th>
+                                    <th>会員のみ</th>
+                                    <th>値引き</th>
+                                    <th>残発行枚数</th>
+                                    <th>下限金額</th>
+                                    <th>有効期間</th>
+                                    <th>編集</th>
+                                    <th>状態</th>
+                                    <th>削除</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for Coupon in pagination %}
+                                <tr class="{% if Coupon.enable_flag == 0 %}active{% endif %}">
+                                    <td class="coupon_id">{{ Coupon.id }}</td>
+                                    <td class="coupon_cd">{{ Coupon.coupon_cd }}</td>
+                                    <td class="coupon_name">{{ Coupon.coupon_name }}</td>
+
+                                    {% if Coupon.coupon_type == 1 %}
+                                        <td class="coupon_type">商品</td>
+                                    {% elseif Coupon.coupon_type == 2 %}
+                                        <td class="coupon_type">カテゴリ</td>
+                                    {% elseif Coupon.coupon_type == 3 %}
+                                        <td class="coupon_type">全商品</td>
+                                    {% else %}
+                                        <td class="coupon_type"></td>
+                                    {% endif %}
+
+                                    {% if Coupon.coupon_member == 1 %}
+                                        <td class="coupon_member">YES</td>
+                                    {% else %}
+                                        <td class="coupon_member">NO</td>
+                                    {% endif %}
+
+                                    {% if Coupon.discount_type == 1 %}
+                                        <td class="coupon_discount">{{ Coupon.discount_price|price }}</td>
+                                    {% elseif Coupon.discount_type == 2 %}
+                                        <td class="coupon_discount">{{ Coupon.discount_rate }} %</td>
+                                    {% else %}
+                                        <td class="coupon_discount"></td>
+                                    {% endif %}
+
+                                    <td>{{ Coupon.coupon_use_time|number_format }} / {{ Coupon.coupon_release|number_format }}</td>
+                                    <td>{{ Coupon.coupon_lower_limit|price }}</td>
+                                    <td>{{ Coupon.available_from_date|date_format }} ～ {{ Coupon.available_to_date|date_format }}</td>
+
+                                    <td><a href="{{ url('plugin_coupon_edit', { id: Coupon.id }) }}">編集</a></td>
+                                    <td>
+                                        <a href="{{ url('plugin_coupon_enable', { id: Coupon.id }) }}">
+                                        {% if Coupon.enable_flag == 1 %}
+                                            有効
+                                        {% else %}
+                                            無効
+                                        {% endif %}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url('plugin_coupon_delete', { id : Coupon.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="このクーポンを削除しても宜しいですか？">削除</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div>
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+        <a href="{{ url('plugin_coupon_new') }}" class="btn btn-primary btn-block btn-lg">クーポンを新規登録</a>
+    </div>
+</div>
+</form>
+{% endblock %}

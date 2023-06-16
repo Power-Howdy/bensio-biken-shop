@@ -1,0 +1,28 @@
+# New hookpoint for version >= 3.0.9
+Entry/index.twig:
+    - [onRenderEntryIndex, NORMAL]
+Entry/confirm.twig:
+    - [onRenderEntryConfirm, NORMAL]
+front.entry.index.complete:
+    - [onFrontEntryIndexComplete, NORMAL]
+Mypage/change.twig:
+    - [onRenderMypageChange, NORMAL]
+front.mypage.change.index.complete:
+    - [onFrontMypageChangeIndexComplete, NORMAL]
+Admin/Customer/edit.twig:
+    - [onRenderAdminCustomerEdit, NORMAL]
+admin.customer.edit.index.complete:
+    - [onAdminCustomerEditIndexComplete, NORMAL]
+# deprecated event (for v3.0.0 - 3.0.8)
+eccube.event.render.entry.before:
+    - [onRenderEntryBefore, NORMAL]
+eccube.event.controller.entry.after:
+    - [onControllerEntryAfter, NORMAL]
+eccube.event.render.mypage_change.before:
+    - [onRenderMypageChangeBefore, NORMAL]
+eccube.event.controller.mypage_change.after:
+    - [onControllMypageChangeAfter, NORMAL]
+eccube.event.render.admin_customer_new.before:
+    - [onRenderAdminCustomerBefore, NORMAL]
+eccube.event.render.admin_customer_edit.before:
+    - [onRenderAdminCustomerBefore, NORMAL]

@@ -1,0 +1,5 @@
+name: 新着商品ブロックプラグイン
+version: 1.0
+service:
+    - Shiro8NewProductBlock3ServiceProvider
+code: Shiro8NewProductBlock3

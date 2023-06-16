@@ -1,0 +1,88 @@
+{#
+ This file is part of EC-CUBE
+
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ https://www.ec-cube.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['mailmagazine', 'mailmagazine_template'] %}
+
+{% block title %}メルマガ管理{% endblock %}
+{% block sub_title %}テンプレート一覧{% endblock %}
+
+{% block javascript %}
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
+
+<script>
+function fnDelete(action) {
+    if (confirm('このテンプレートを削除しても宜しいですか？')) {
+        document.form1.action = action;
+        document.form1.submit();
+    }
+}
+function changeAction(action) {
+    document.form1.action = action;
+    document.form1.submit();
+}
+</script>
+
+{% endblock %}
+
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">テンプレート一覧</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <form name="form1" id="form1" method="post" action="">
+                        <input type="hidden" name="{{ constant('Eccube\\Common\\Constant::TOKEN_NAME') }}" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
+                        <div class="table_list">
+                            <div class="table-responsive with-border">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>作成日</th>
+                                        <th>件名</th>
+                                        <th>編集</th>
+                                        <th>削除</th>
+                                        <th>プレビュー</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for Template in TemplateList %}
+                                        <tr>
+                                            <td>{{ Template.create_date|date("Y.m.d") }}</td>
+                                            <td>{{ Template.subject }}</td>
+                                            <td><a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_template_edit', { id: Template.id }) }}'); document.form1.submit(); return false;">編集</a></td>
+                                            <td><a href="?" onclick="fnDelete('{{ url('plugin_mail_magazine_template_delete', { id: Template.id }) }}'); document.form1.submit(); return false;">削除</a></td>
+                                            <td><a href="?" onclick="changeAction('{{ url('plugin_mail_magazine_template_preview', { id: Template.id }) }}'); document.form1.submit(); return false;">プレビュー</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                            <a href="{{ url('plugin_mail_magazine_template_regist') }}" class="btn btn-primary btn-block btn-lg">テンプレートを新規登録</a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.box -->
+
+        </div>
+    </div>
+
+{% endblock %}

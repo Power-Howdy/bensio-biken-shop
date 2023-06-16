@@ -1,0 +1,10 @@
+<h2 class="heading02">ポイント利用</h2>
+<div id="point_box" class="column">
+    <div id="point_box__body" class="text-left form-group">
+        <p id="point_box__info" class="text-left">
+            現在の保有ポイントは「<strong class="text-primary">{{ (point.current) >= 0 ? (point.current)|number_format  : 0 }} pt</strong>」です。<br/>
+            ポイントは商品購入時に1pt＝<strong class="text-primary">{{ point.rate|price }}</strong>として利用することができます。
+            <a id="confirm_box__use_point_edit_button" href="{{ url('point_use') }}" class="btn btn-default btn-sm">ポイントを利用する</a>
+        </p>
+    </div>
+</div>

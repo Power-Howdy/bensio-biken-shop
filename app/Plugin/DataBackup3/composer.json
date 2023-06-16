@@ -1,0 +1,18 @@
+{
+    "name": "EC-CUBE/DataBackup3",
+    "type": "library",
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "EC-CUBE CO.,LTD.",
+            "email": "support@ec-cube.net"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "preferred-install": {
+            "*": "dist"
+        }
+    }
+}

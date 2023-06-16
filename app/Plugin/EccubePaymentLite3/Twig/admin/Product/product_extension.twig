@@ -1,0 +1,79 @@
+<script>
+    $(function(){
+        $('#free_box').after($('#free_description_box'));
+    });
+</script>
+<script>
+    // 初期表示
+    $(function() {
+        disableFreeDescriptionInfo();
+        // 販売種別変更時に、定期サイクルフォームの使用可、不可を設定
+        $("#admin_product_class_product_type").change(function(){
+            var selectedSaleTypeId = $(this).val();
+            console.log(selectedSaleTypeId);
+            // 定期サイクルフォームを表示非表示にする
+            if (selectedSaleTypeId != {{ app.config.product_type_normal }}
+                && selectedSaleTypeId != {{ app.config.product_type_download }}) {
+                // 表示可能
+                $("#free_description_box").show();
+                $("#free_description_box").show();
+            } else {
+                // データクリアかつ表示不可
+                $("#admin_product_free_description_quantity").val('');
+                $("#admin_product_free_description_selling_price").val('');
+                $("#admin_product_free_description_payment_delivery").val('');
+                $("#free_description_box").hide();
+                $("#free_description_box").hide();
+            }
+        });
+    });
+
+
+    function disableFreeDescriptionInfo() {
+        var isRegularProduct = '{{ regular_product_type }}';
+        // 定期サイクルフォームを表示非表示にする
+        if (isRegularProduct) {
+            // 表示可能
+            $("#free_description_box").show();
+            $("#free_description_box").show();
+        } else {
+            // データクリアかつ表示不可
+            $("#admin_product_free_description_quantity").val('');
+            $("#admin_product_free_description_selling_price").val('');
+            $("#admin_product_free_description_payment_delivery").val('');
+            $("#free_description_box").val('').hide();
+            $("#free_description_box").val('').hide();
+        }
+    }
+</script>
+
+<div style="display: none;">
+    <div id="free_description_box" class="box accordion form-horizontal">
+        <div  id="free_description_box__toggle" class="box-header toggle">
+            <h3 class="box-title">特定商法取引に関する項目 <svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+        </div><!-- /.box-header -->
+        <div id="free_description_box__body" class="box-body accpanel">
+            <div id="free_description_list__quantity" class="form-group">
+                {{ form_label(form.free_description_quantity) }}
+                <div class="col-sm-9 col-lg-10">
+                    {{ form_widget(form.free_description_quantity, { attr : { placeholder : '入力例）購入者が定期購入を解除した場合、または商品販売が終了するまで自動継続' }}) }}
+                    {{ form_errors(form.free_description_quantity) }}
+                </div>
+            </div>
+            <div id="free_description_list__price" class="form-group">
+                {{ form_label(form.free_description_selling_price) }}
+                <div class="col-sm-9 col-lg-10">
+                    {{ form_widget(form.free_description_selling_price, { attr : { placeholder : '入力例）購入者が定期購入を解除した場合、または商品販売が終了するまで自動継続' }}) }}
+                    {{ form_errors(form.free_description_selling_price) }}
+                </div>
+            </div>
+            <div id="free_description_list__payment_delivery" class="form-group">
+                {{ form_label(form.free_description_payment_delivery) }}
+                <div class="col-sm-9 col-lg-10">
+                    {{ form_widget(form.free_description_payment_delivery, { attr : { placeholder : '入力例）購入者が定期購入を解除した場合、または商品販売が終了するまで自動継続\nお支払い日から●日以内にお届けします' }}) }}
+                    {{ form_errors(form.free_description_payment_delivery) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

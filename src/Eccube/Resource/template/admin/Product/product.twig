@@ -1,0 +1,552 @@
+{#
+This file is part of EC-CUBE
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+http://www.ec-cube.co.jp/
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['product', 'product_edit'] %}
+
+{% block title %}商品管理{% endblock %}
+{% block sub_title %}商品登録{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/fileupload/jquery.fileupload.css">
+<link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/fileupload/jquery.fileupload-ui.css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<style>
+    .ui-state-highlight {
+        height: 148px;
+        border: dashed 1px #ccc;
+        background: #fff;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/fileupload/vendor/jquery.ui.widget.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/fileupload/jquery.iframe-transport.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/fileupload/jquery.fileupload.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/fileupload/jquery.fileupload-process.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/fileupload/jquery.fileupload-validate.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script>
+$(function() {
+    $("#thumb").sortable({
+        cursor: 'move',
+        opacity: 0.7,
+        placeholder: 'ui-state-highlight',
+        update: function (event, ui) {
+            updateRank();
+        }
+    });
+    {% if has_class == false %}
+    if ($("#{{ form.class.stock_unlimited.vars.id }}").prop("checked")) {
+        $("#{{ form.class.stock.vars.id }}").attr("disabled", "disabled").val('');
+    } else {
+        $("#{{ form.class.stock.vars.id }}").removeAttr("disabled");
+    }
+    $("#{{ form.class.stock_unlimited.vars.id }}").on("click change", function () {
+        if ($(this).prop("checked")) {
+            $("#{{ form.class.stock.vars.id }}").attr("disabled", "disabled").val('');
+        } else {
+            $("#{{ form.class.stock.vars.id }}").removeAttr("disabled");
+        }
+    });
+    {% endif %}
+    var proto_img = ''
+            + '<li class="ui-state-default">'
+            + '<img src="__path__" />'
+            + '<a class="delete-image">'
+            + '<svg class="cb cb-close">'
+            + '<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cb-close"></use>'
+            + '</svg>'
+            + '</a>'
+            + '</li>';
+    var proto_add = '{{ form_widget(form.add_images.vars.prototype) }}';
+    var proto_del = '{{ form_widget(form.delete_images.vars.prototype) }}';
+    {% for image in form.images %}
+    var $img = $(proto_img.replace(/__path__/g, '{{ app.config.image_save_urlpath }}/{{ image.vars.value }}'));
+    var $widget = $('{{ form_widget(image) }}');
+    $widget.val('{{ image.vars.value }}');
+    $("#thumb").append($img.append($widget));
+    {% endfor %}
+    {% for add_image in form.add_images %}
+    var $img = $(proto_img.replace(/__path__/g, '{{ app.config.image_temp_urlpath }}/{{ add_image.vars.value }}'));
+    var $widget = $('{{ form_widget(add_image) }}');
+    $widget.val('{{ add_image.vars.value }}');
+    $("#thumb").append($img.append($widget));
+    {% endfor %}
+    {% for delete_image in form.delete_images %}
+    $("#thumb").append('{{ form_widget(delete_image) }}');
+    {% endfor %}
+    var hideSvg = function () {
+        if ($("#thumb li").length > 0) {
+            $("#icon_no_image").css("display", "none");
+        } else {
+            $("#icon_no_image").css("display", "");
+        }
+    };
+    var updateRank = function () {
+        $("#thumb li").each(function (index) {
+            $(this).find(".rank_images").remove();
+            filename = $(this).find("input[type='hidden']").val();
+            $rank = $('<input type="hidden" class="rank_images" name="rank_images[]" />');
+            $rank.val(filename + '//' + parseInt(index + 1));
+            $(this).append($rank);
+        });
+    }
+    hideSvg();
+    updateRank();
+    // 画像削除時
+    var count_del = 0;
+    $("#thumb").on("click", ".delete-image", function () {
+        var $new_delete_image = $(proto_del.replace(/__name__/g, count_del));
+        var src = $(this).prev().attr('src')
+                .replace('{{ app.config.image_temp_urlpath }}/', '')
+                .replace('{{ app.config.image_save_urlpath }}/', '');
+        $new_delete_image.val(src);
+        $("#thumb").append($new_delete_image);
+        $(this).parent("li").remove();
+        hideSvg();
+        updateRank();
+        count_del++;
+    });
+    var count_add = {{ form.add_images|length|default(0) }};
+    $('#{{ form.product_image.vars.id }}').fileupload({
+        url: "{{ url('admin_product_image_add') }}",
+        type: "post",
+        sequentialUploads: true,
+        dataType: 'json',
+        done: function (e, data) {
+            $('#progress').hide();
+            $.each(data.result.files, function (index, file) {
+                var path = '{{ app.config.image_temp_urlpath }}/' + file;
+                var $img = $(proto_img.replace(/__path__/g, path));
+                var $new_img = $(proto_add.replace(/__name__/g, count_add));
+                $new_img.val(file);
+                $child = $img.append($new_img);
+                $('#thumb').append($child);
+                count_add++;
+            });
+            hideSvg();
+            updateRank();
+        },
+        fail: function (e, data) {
+            alert('アップロードに失敗しました。');
+        },
+        always: function (e, data) {
+            $('#progress').hide();
+            $('#progress .progress-bar').width('0%');
+        },
+        start: function (e, data) {
+            $('#progress').show();
+        },
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        maxFileSize: 10000000,
+        maxNumberOfFiles: 10,
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+            );
+        },
+        processalways: function (e, data) {
+            if (data.files.error) {
+                alert("画像ファイルサイズが大きいか画像ファイルではありません。");
+            }
+        }
+    });
+    // 画像アップロード
+    $('#file_upload').on('click', function () {
+        $('#{{ form.product_image.vars.id }}').click();
+    });
+});
+
+function fnClass(action) {
+    document.form1.action = action;
+    document.form1.submit();
+    return false;
+}
+
+</script>
+{% endblock javascript %}
+
+{% block main %}
+        <div class="row" id="aside_wrap">
+            <form role="form" name="form1" id="form1" method="post" action="" novalidate enctype="multipart/form-data">
+            {{ form_widget(form._token) }}
+                <div id="detail_wrap" class="col-md-9">
+                    <div id="detail_box" class="box form-horizontal">
+                        <div id="detail_box__header" class="box-header">
+                            <h3 class="box-title">基本情報</h3>
+                        </div><!-- /.box-header -->
+                        <div id="detail_box__body" class="box-body">
+
+                            {# 商品ID #}
+                            {% if Product.id %}
+                                <div id="detail_box__id" class="form-group">
+                                    <label class="col-sm-3 col-lg-2 control-label">商品ID</label>
+                                    <div class="col-sm-9 col-lg-10 padT07">{{ Product.id }}</div>
+                                </div>
+                            {% endif %}
+
+
+                            {{ form_row(form.name) }}
+                            {% if has_class == false %}
+                                {{ form_row(form.class.product_type, { attr : { class : 'form-inline  padT07' } } ) }}
+                            {% endif %}
+
+                            <div id="detail_box__image" class="form-group">
+                                <label class="col-sm-2 control-label" for="admin_product_product_image">
+                                    {{ form.product_image.vars.label }}<br>
+                                    <span class="small">620px以上推奨</span>
+                                </label>
+                                <div id="detail_files_box" class="col-sm-9 col-lg-10">
+                                    <div class="photo_files" id="drag-drop-area">
+                                        <svg id="icon_no_image" class="cb cb-photo no-image"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cb-photo"></use></svg>
+                                        <ul id="thumb" class="clearfix"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group marB30">
+                                <div id="detail_box__file_upload" class="col-sm-offset-2 col-sm-9 col-lg-10 ">
+
+                                    <div id="progress" class="progress progress-striped active" style="display:none;">
+                                        <div class="progress-bar progress-bar-info"></div>
+                                    </div>
+
+                                    {{ form_widget(form.product_image, { attr : { accept : 'image/*', style : 'display:none;' } }) }}
+                                    {{ form_errors(form.product_image) }}
+                                    <a id="file_upload" class="with-icon">
+                                        <svg class="cb cb-plus"> <use xlink:href="#cb-plus" /></svg>ファイルをアップロード
+                                    </a>
+
+                                </div>
+                            </div>
+
+                            <div id="detail_description_box" class="form-group">
+                                {{ form_label(form.description_detail) }}
+                                <div id="detail_description_box__detail" class="col-sm-9 col-lg-10">
+                                    {{ form_widget(form.description_detail) }}
+                                    {{ form_errors(form.description_detail) }}
+                                    <div id="detail_description_box__list" class="accordion marT15 marB20"><a id="detail_description_box__list_toggle" class="toggle with-icon"><svg class="cb cb-plus icon_plus"> <use xlink:href="#cb-plus" /></svg>一覧コメントを追加</a>
+                                        <div class="accpanel padT08">
+                                            {{ form_widget(form.description_list) }}
+                                            {{ form_errors(form.description_list) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if has_class == false %}
+                            <div id="detail_box__price" class="form-group">
+                                {{ form_label(form.class.price02) }}
+                                <div id="detail_box__price02" class="col-sm-3 col-lg-3">
+                                    {{ form_widget(form.class.price02) }}
+                                    {{ form_errors(form.class.price02) }}
+                                    <div id="detail_box__price01" class="accordion marT15 marB20"><a class="toggle with-icon"><svg class="cb cb-plus icon_plus"> <use xlink:href="#cb-plus" /></svg>通常価格を追加</a>
+                                        <div class="accpanel padT08">
+                                            {{ form_widget(form.class.price01) }}
+                                            {{ form_errors(form.class.price01) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="detail_box__stock" class="form-group">
+                                {{ form_label(form.class.stock) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    <div class="row">
+                                        <div id="detail_box__unlimited" class="col-xs-12 form-inline">
+                                            {{ form_widget(form.class.stock) }}
+                                            {{ form_errors(form.class.stock) }}
+                                            {{ form_widget(form.class.stock_unlimited) }}
+                                            {{ form_errors(form.class.stock_unlimited) }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div id="detail_category_box" class="form-group">
+                                {{ form_label(form.Category) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    <div class="accordion marT05">
+                                        <a id="detail_category_box__toggle" class="toggle with-icon"><svg class="cb cb-plus icon_plus"> <use xlink:href="#cb-plus" /></svg>カテゴリを選択</a>
+                                        <div id="detail_category_box__list" class="accpanel padT08{% if form.Category.vars.valid == false %} has-error{% endif %}">
+                                            {{ form_widget(form.Category) }}
+                                            {{ form_errors(form.Category) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="detail_tag_box" class="form-group">
+                                {{ form_label(form.Tag) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    <div class="accordion marT05">
+                                        <a id="detail_tags_box__toggle" class="toggle with-icon"><svg class="cb cb-plus icon_plus"> <use xlink:href="#cb-plus" /></svg>{{ 'Tag'|trans }}を選択</a>
+                                        <div id="detail_tags_box__list" class="accpanel padT08">
+                                            {{ form_widget(form.Tag) }}
+                                            {{ form_errors(form.Tag) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="extra-form">
+                                {% for f in form.getIterator %}
+                                    {% if f.vars.name matches '[^plg*]' %}
+                                        {{ form_row(f) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+
+                    <div id="sub_detail_box" class="box accordion form-horizontal">
+                        <div  id="sub_detail_box__toggle" class="box-header toggle">
+                            <h3 class="box-title">詳細な設定<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                        </div><!-- /.box-header -->
+                        <div id="sub_detail_box__body" class="box-body accpanel">
+
+                            {% if has_class == false %}
+                                {{ form_row(form.class.code) }}
+                                {{ form_row(form.class.sale_limit) }}
+                            {% endif %}
+
+                            {{ form_row(form.search_word) }}
+                            {% if has_class == false %}
+                                {{ form_row(form.class.delivery_date) }}
+                                {% if BaseInfo.option_product_delivery_fee %}
+                                <div id="sub_detail_box__delivery_fee" class="form-group">
+                                    {{ form_label(form.class.delivery_fee) }}
+                                    <div class="col-sm-3 col-lg-3">
+                                        {{ form_widget(form.class.delivery_fee) }}
+                                        {{ form_errors(form.class.delivery_fee) }}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if BaseInfo.option_product_tax_rule %}
+                                <div id="sub_detail_box__tax_rate" class="form-group">
+                                    {{ form_label(form.class.tax_rate) }}
+                                    <div class="col-sm-3 col-lg-3">
+                                        {{ form_widget(form.class.tax_rate) }}
+                                        {{ form_errors(form.class.tax_rate) }}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                    <div id="free_box" class="box accordion">
+                        <div id="free_box__body_toggle" class="box-header toggle">
+                            <h3 class="box-title">フリーエリア<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                        </div><!-- /.box-header -->
+                        <div id="free_box__body" class="box-body accpanel">
+                            {{ form_widget(form.free_area, {id: 'wysiwyg-area'}) }}
+                            {{ form_errors(form.free_area) }}
+                        </div>
+                    </div>
+
+                    <div id="video_box" class="box accordion form-horizontal">
+                        <div id="video_box__body_toggle" class="box-header toggle">
+                            <h3 class="box-title">動画<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                        </div><!-- /.box-header -->
+                        <div id="video_box__body" class="box-body accpanel">
+							{{ form_row(form.video_comment) }}
+							{{ form_row(form.video_file) }}
+							<div style="margin:-10px 0 10px 0;width:80%;float:right;">
+								ビデオテキスト：コンテンツ管理＞ファイル管理 [videotext]フォルダの[表示]をクリックしてファイルをアップロードし、アップロードしたファイル名を入力する。
+							</div>
+							<div style="clear:both;"></div>
+							{{ form_row(form.video_userid) }}
+							{{ form_row(form.video_userpass) }}
+							<div style="margin:20px 0 10px 0;clear:both;">
+								動画のID：https://player.vimeo.com/video/<font color="#FF0000">*********</font>　<span style="color: #909;">入力例)&nbsp;&nbsp;136554876</span><br />
+							</div>
+                            {{ form_row(form.video_url1) }}
+                            {{ form_row(form.video_title1) }}
+                            {{ form_row(form.video_text1) }}
+                            {{ form_row(form.video_url2) }}
+                            {{ form_row(form.video_title2) }}
+                            {{ form_row(form.video_text2) }}
+                            {{ form_row(form.video_url3) }}
+                            {{ form_row(form.video_title3) }}
+                            {{ form_row(form.video_text3) }}
+                            {{ form_row(form.video_url4) }}
+                            {{ form_row(form.video_title4) }}
+                            {{ form_row(form.video_text4) }}
+                            {{ form_row(form.video_url5) }}
+                            {{ form_row(form.video_title5) }}
+                            {{ form_row(form.video_text5) }}
+                            {{ form_row(form.video_url6) }}
+                            {{ form_row(form.video_title6) }}
+                            {{ form_row(form.video_text6) }}
+                            {{ form_row(form.video_url7) }}
+                            {{ form_row(form.video_title7) }}
+                            {{ form_row(form.video_text7) }}
+                            {{ form_row(form.video_url8) }}
+                            {{ form_row(form.video_title8) }}
+                            {{ form_row(form.video_text8) }}
+                            {{ form_row(form.video_url9) }}
+                            {{ form_row(form.video_title9) }}
+                            {{ form_row(form.video_text9) }}
+                            {{ form_row(form.video_url10) }}
+                            {{ form_row(form.video_title10) }}
+                            {{ form_row(form.video_text10) }}
+                            {{ form_row(form.video_url11) }}
+                            {{ form_row(form.video_title11) }}
+                            {{ form_row(form.video_text11) }}
+                            {{ form_row(form.video_url12) }}
+                            {{ form_row(form.video_title12) }}
+                            {{ form_row(form.video_text12) }}
+                            {{ form_row(form.video_url13) }}
+                            {{ form_row(form.video_title13) }}
+                            {{ form_row(form.video_text13) }}
+                            {{ form_row(form.video_url14) }}
+                            {{ form_row(form.video_title14) }}
+                            {{ form_row(form.video_text14) }}
+                            {{ form_row(form.video_url15) }}
+                            {{ form_row(form.video_title15) }}
+                            {{ form_row(form.video_text15) }}
+                            {{ form_row(form.video_url16) }}
+                            {{ form_row(form.video_title16) }}
+                            {{ form_row(form.video_text16) }}
+                            {{ form_row(form.video_url17) }}
+                            {{ form_row(form.video_title17) }}
+                            {{ form_row(form.video_text17) }}
+                            {{ form_row(form.video_url18) }}
+                            {{ form_row(form.video_title18) }}
+                            {{ form_row(form.video_text18) }}
+                            {{ form_row(form.video_url19) }}
+                            {{ form_row(form.video_title19) }}
+                            {{ form_row(form.video_text19) }}
+                            {{ form_row(form.video_url20) }}
+                            {{ form_row(form.video_title20) }}
+                            {{ form_row(form.video_text20) }}
+                        </div>
+                    </div>
+
+                    <div id="detail_box__footer" class="row hidden-xs hidden-sm">
+                        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                            <p><a href="{{ url('admin_product_page', { page_no : app.session.get('eccube.admin.product.search.page_no')|default('1') } ) }}?resume=1">検索画面に戻る</a></p>
+                        </div>
+                    </div>
+
+                </div><!-- /.col -->
+
+                <div class="col-md-3" id="aside_column">
+                    <div id="common_box" class="col_inner">
+                        <div id="common_button_box" class="box no-header">
+                            <div id="common_button_box__body" class="box-body">
+                                <div id="common_button_box__status" class="row">
+                                    <div class="col-xs-12">
+                                        <div class="form-group">
+                                            {{ form_widget(form.Status) }}
+                                            {{ form_errors(form.Status) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="common_button_box__insert_button" class="row text-center">
+                                    <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                        <button type="submit" class="btn btn-primary btn-block btn-lg prevention-btn prevention-mask" >商品を登録</button>
+                                    </div>
+                                </div>
+                                <div id="common_button_box__class_set_button" class="row text-center with-border">
+                                    <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                        {% if id is null %}
+                                            <button class="btn btn-default btn-block btn-sm" disabled>
+                                                規格設定
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-default btn-block btn-sm" onclick="fnClass('{{ url('admin_product_product_class', { 'id' : id }) }}');return false;">
+                                                規格設定
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div id="common_button_box__operation_button" class="row text-center with-border">
+                                    <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                        <ul class="col-3">
+                                            {% if id is null %}
+                                                <li>
+                                                    <button class="btn btn-default btn-block btn-sm" disabled>
+                                                        確認
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="btn btn-default btn-block btn-sm" disabled>
+                                                        複製
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="btn btn-default btn-block btn-sm" disabled>
+                                                        削除
+                                                    </button>
+                                                </li>
+                                            {% else %}
+                                                <li>
+                                                    <a class="btn btn-default btn-block btn-sm" href="{{ url('admin_product_product_display', {'id' : id}) }}" target="_blank">
+                                                        確認
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="btn btn-default btn-block btn-sm" href="{{ url('admin_product_product_copy', {'id' : Product.id}) }}"  {{ csrf_token_for_anchor() }} data-method="post" data-message="この商品情報を複製してもよろしいですか？">
+                                                        複製
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                     <a class="btn btn-default btn-block btn-sm" href="{{ url('admin_product_product_delete', {'id' : Product.id}) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="この商品情報を削除してもよろしいですか？">
+                                                        削除
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div><!-- /.box-body -->
+                        </div><!-- /.box -->
+
+                        <div id="common_date_info_box" class="box no-header">
+                            <div id="common_date_info_box__body" class="box-body update-area">
+                                <p><svg class="cb cb-clock"> <use xlink:href="#cb-clock" /></svg>登録日：{{ Product.create_date|date_format }}</p>
+                                <p><svg class="cb cb-clock"> <use xlink:href="#cb-clock" /></svg>更新日：{{ Product.update_date|date_format }}</p>
+                            </div>
+                        </div><!-- /.box -->
+
+                        <div id="common_shop_note_box" class="box">
+                            <div id="common_shop_note_box__header" class="box-header">
+                                <h3 class="box-title">ショップ用メモ欄</h3>
+                            </div><!-- /.box-header -->
+                            <div id="common_shop_note_box__body" class="box-body">
+                                {{ form_widget(form.note) }}
+                                {{ form_errors(form.note) }}
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.col -->
+
+            </form>
+        </div>
+
+{% endblock %}

@@ -1,0 +1,2 @@
+id,coupon_id,coupon_cd,coupon_name,user_id,email,order_id,pre_order_id,order_date,discount,del_flg,order_change_status,create_date,update_date
+1,1,70y8e2wd2pkw,クーポンテスト,1,,6,71b7b54fcbc25213e6152c2b8d4161818f436ab3,"2021-05-17 15:39:48",3000,0,0,"2021-05-17 15:39:45","2021-05-17 15:39:48"

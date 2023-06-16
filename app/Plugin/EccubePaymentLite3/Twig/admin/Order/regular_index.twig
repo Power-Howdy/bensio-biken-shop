@@ -1,0 +1,275 @@
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['order', 'epsilon_regular_order_master'] %}
+
+{% block title %}受注管理{% endblock %}
+{% block sub_title %}定期受注マスター{% endblock %}
+
+{% form_theme searchForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/bootstrap-datetimepicker.min.css">
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
+<script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
+<script>
+$(function() {
+
+    // 登録チェックボックス
+    $('#all-check').click(function() {
+        var checkall = $('#all-check').prop('checked');
+        if (checkall) {
+            $('input[id^=check-]').prop('checked', true);
+        } else {
+            $('input[id^=check-]').prop('checked', false);
+        }
+    });
+
+    $('#order_add').click(function(event) {
+        event.preventDefault();
+        var href = $(this).attr('href');
+        var isChecked = false;
+        $('input[id^=check-]').each(function() {
+            var check = $(this).prop('checked');
+            if (check) {
+                isChecked = true;
+            }
+        });
+        if (!isChecked) {
+            alert("チェックボックスが選択されていません");
+            return false;
+        }
+        $('#dropdown-form').attr('action', href).submit();
+    });
+
+});
+function fnDelete(action) {
+    if (confirm('この受注情報を削除しても宜しいですか？')) {
+        document.search_form.action = action;
+        document.search_form.submit();
+    }
+}
+</script>
+{% endblock javascript %}
+
+{% block main %}
+    <!--検索条件設定テーブルここから-->
+    <div class="search-box">
+        <form name="search_form" id="search_form" method="post" action="{{ url('paylite_regular_order') }}">
+            {{ form_widget(searchForm._token) }}
+            <div class="row">
+                <div class="col-md-12 accordion">
+
+                    {{ form_widget(searchForm.multi, { attr: { placeholder: '受注ID・購入者名・購入者会社名', class : 'input_search' } } ) }}
+
+                    <a href="#" class="toggle{% if active %} active{% endif %}">
+                        <svg class="cb cb-minus"> <use xlink:href="#cb-minus"/></svg> <svg class="cb cb-minus"> <use xlink:href="#cb-minus"/></svg>
+                    </a>
+                    <div class="search-box-inner accpanel" {% if active %} style="display: block;"{% endif %}>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-10 col-lg-offset-1 search">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                        <label>最終対応状況</label>
+                                        {{ form_widget(searchForm.latest_status) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                        <label>定期継続状況</label>
+                                        {{ form_widget(searchForm.regular_status) }}
+                                        </div>
+                                    </div>
+                                </div><!-- /.row -->
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>お名前</label>
+                                            {{ form_widget(searchForm.name) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>お名前(フリガナ)</label>
+                                            {{ form_widget(searchForm.kana) }}
+                                        </div>
+                                    </div>
+                                </div><!-- /.row -->
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>メールアドレス</label>
+                                        <div class="form-group">
+                                        {{ form_widget(searchForm.email) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>電話番号</label>
+                                            {{ form_widget(searchForm.tel) }}
+                                            {{ form_errors(searchForm.tel) }}
+                                        </div>
+                                    </div>
+                                </div><!-- /.row -->
+
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group">
+                                        <label>性別</label>
+                                        {{ form_widget(searchForm.sex) }}
+                                        </div>
+                                    </div>
+                                </div><!-- /.row -->
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label>初回購入日</label>
+                                        <div class="form-group range">
+                                            {{ form_widget(searchForm.first_order_date_start, {'attr': {'class': 'input_cal'}}) }} ～ {{ form_widget(searchForm.first_order_date_end, {'attr': {'class': 'input_cal'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label>定期回数</label>
+                                        <div class="form-group range">
+                                            {{ form_widget(searchForm.regular_count_start, {'attr': {'class': 'input_cal'}}) }} ～ {{ form_widget(searchForm.regular_count_end, {'attr': {'class': 'input_cal'}}) }}
+                                        </div>
+                                    </div>
+                                </div><!-- /.row -->
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>購入商品ID</label>
+                                            {{ form_widget(searchForm.buy_product_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>購入商品名</label>
+                                            {{ form_widget(searchForm.buy_product_name) }}
+                                        </div>
+                                    </div>
+                                </div><!-- /.row -->
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <p class="text-center"><a href="#" class="search-clear">検索条件をクリア</a></p>
+                                    </div>
+                                </div><!-- /.row -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <div class="row btn_area">
+                <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        検索する <svg class="cb cb-angle-right"> <use xlink:href="#cb-angle-right" /></svg>
+                    </button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+    </div>
+    <!--検索条件設定テーブルここまで-->
+
+{% if pagination %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                {% if pagination.totalItemCount > 0 %}
+                <div class="box-header with-arrow">
+                    <h3 class="box-title">検索結果 <span class="normal"><strong>{{ pagination.totalItemCount }} 件</strong> が該当しました</span></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="text-align:left; float:left; padding:12px; font-size:14px; font-size:1.4rem;"><a href="{{ url('paylite_regular_order_add') }}" id="order_add" >受注一括作成</a></div>
+                            <ul class="sort-dd">
+                                <li class="dropdown">
+                                    {% for pageMax in pageMaxis if pageMax.name == page_count %}
+                                        <a class="dropdown-toggle" data-toggle="dropdown">{{ pageMax.name|e }}件<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></a>
+                                        <ul class="dropdown-menu">
+                                    {% endfor %}
+                                    {% for pageMax in pageMaxis if pageMax.name != page_count %}
+                                            <li><a href="{{ path('paylite_regular_order_page', {'page_no': 1, 'page_count': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
+                                    {% endfor %}
+                                        </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <form id="dropdown-form">
+                    <div class="table_list">
+                        <div class="table-responsive with-border">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"><input type="checkbox" id="all-check"></th>
+                                        <th>定期ID</th>
+                                        <th>継続状況</th>
+                                        <th>お名前</th>
+                                        <th>定期回数</th>
+                                        <th>支払方法</th>
+                                        <th>初回注文番号</th>
+                                        <th>最新注文番号</th>
+                                        <th>最新対応状況</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                            {% for RegularOrder in pagination %}
+                                    <tr>
+                                        {% if RegularOrder.RegularStatus.id == 2 %}
+                                            <td></td>
+                                        {% elseif nextOrderDate[RegularOrder.id] is null %}
+                                            <td class="text-center"><input type="checkbox" id="check-{{ RegularOrder.id }}" data-id="{{ RegularOrder.id }}" name="ids{{ RegularOrder.id }}"></td>
+                                        {% else %}
+                                            <td>次回受注可能日：{{ nextOrderDate[RegularOrder.id] }}</td>
+                                        {% endif %}
+                                        <td>{{ RegularOrder.id }}</td>
+                                        <td>{{ RegularOrder.RegularStatus }}</td>
+                                        <td>{{ RegularOrder.name01 }} {{ RegularOrder.name02 }}</td>
+                                        <td>{{ RegularOrder.regular_order_count }}</td>
+                                        <td>{{ RegularOrder.payment_method }}</td>
+                                        <td><a href="{{ url('admin_order_edit', { id : RegularOrder.FirstOrder.id }) }}" target="blank">{{ RegularOrder.FirstOrder.id }}</a></td>
+                                        <td><a href="{{ url('admin_order_edit', { id : RegularOrder.LastOrder.id }) }}" target="blank">{{ RegularOrder.LastOrder.id }}</a></td>
+                                        <td>{{ RegularOrder.LastOrder.OrderStatus }}</td>
+                                        <td class="icon_edit">
+                                            <div class="dropdown">
+                                                <a class="dropdown-toggle" data-toggle="dropdown"><svg class="cb cb-ellipsis-h"> <use xlink:href="#cb-ellipsis-h" /></svg></a>
+                                                <ul class="dropdown-menu dropdown-menu-right">
+                                                <li><a href="{{ url('paylite_regular_order_edit', { id : RegularOrder.id }) }}">編集</a></li>
+                                                <li><a href="{{ url('paylite_regular_order_delete', { id : RegularOrder.id }) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="この受注情報を削除してもよろしいですか？">削除</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                            {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+                </div><!-- /.box-body -->
+                {% if pagination.totalItemCount > 0 %}
+                    {% include "pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'paylite_regular_order_page' } %}
+                {% endif %}
+                {% else %}
+                <div class="box-header with-arrow">
+                    <h3 class="box-title">検索条件に該当するデータがありませんでした。</h3>
+                </div><!-- /.box-header -->
+                {% endif %}
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div>
+
+{% endif %}
+
+{% endblock %}

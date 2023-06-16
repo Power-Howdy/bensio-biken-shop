@@ -1,0 +1,15 @@
+<script>
+    $(function (){
+        $('#payment_list').append(`
+            <p id="gmo-description">
+                GMO後払いとは お客様の手元に商品が到着した後に代金をお支払い頂く決済方法です。
+                商品出荷後、商品とは別に払込票を郵送いたしますので、お近くの コンビニエンスストア・郵便局（ゆうちょ銀行）・銀行・LINE Payにてお支払いください。
+            </p>
+            <p>
+                <a href="https://www.gmo-ps.com/customer/" target="_blank">
+                    <img src="{{ app.config.root_urlpath }}{{ app.config.plugin_html_urlpath }}gmo_epsilon/ps_banner_2101.gif" width="187" alt="" style="width: 187px" />
+                </a>
+            </p>
+        `);
+    })
+</script>

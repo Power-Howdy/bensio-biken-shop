@@ -1,0 +1,259 @@
+{#
+/*
+ * This file is part of Receipt Pdf plugin
+ *
+ * Copyright (C) 2018 NinePoint Co. LTD. All Rights Reserved.
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['order', 'order_master'] %}
+
+{% block title %}受注管理{% endblock %}
+{% block sub_title %}帳票出力{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/bootstrap-datetimepicker.min.css">
+{% endblock stylesheet %}
+
+{% block main %}
+<div class="row" id="aside_wrap">
+    <form role="form" name="receipt_pdf_form" id="receipt_pdf_form" method="post" action="{{ url('plugin_admin_receipt_pdf_download') }}">
+        {{ form_widget(form._token) }}
+        <div class="col-md-9">
+            <div class="box">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">帳票の作成</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body" style="display: block;">
+                    {#出力有無#}
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                        {{ form_label(form.specification_flg) }}
+                            <div class="col-sm-6 col-lg-6 form-inline">
+                                {{ form_widget(form.specification_flg) }}
+                                {{ form_errors(form.specification_flg) }}
+                            </div>
+                        {{ form_label(form.receipt_flg) }}
+                            <div class="col-sm-6 col-lg-6 form-inline">
+                                {{ form_widget(form.receipt_flg) }}
+                                {{ form_errors(form.receipt_flg) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body" style="display: block;">
+                    <div class="form-horizontal">
+                        {#発行日#}
+                        <div class="form-group">
+                            {{ form_label(form.issue_date) }}
+                            <div class="col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.issue_date) }}
+                                {{ form_errors(form.issue_date) }}
+                            </div>
+                        </div>
+                        {#注文番号#}
+                        <div class="form-group">
+                            {{ form_label(form.ids) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.ids) }}
+                                {{ form_errors(form.ids) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box accordion" style="display: block;">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">明細書<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel" style="display: block;">
+                    <div class="form-horizontal">
+                        {#帳票タイトル#}
+                        <div class="form-group">
+                            {{ form_label(form.title) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.title) }}
+                                {{ form_errors(form.title) }}
+                            </div>
+                        </div>
+                        {#メッセージ#}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">メッセージ</label>
+                            <div class="col-sm-offset-2">
+                                {{ form_label(form.message1) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_errors(form.message1) }}
+                                    {{ form_widget(form.message1) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2">
+                                {{ form_label(form.message2) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_widget(form.message2) }}
+                                    {{ form_errors(form.message2) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2">
+                                {{ form_label(form.message3) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_widget(form.message3) }}
+                                    {{ form_errors(form.message3) }}
+                                </div>
+                            </div>
+                        </div>
+                        {#備考#}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">備考</label>
+                            <div class="col-sm-offset-2">
+                                {{ form_label(form.note1) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_errors(form.note1) }}
+                                    {{ form_widget(form.note1) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2">
+                                {{ form_label(form.note2) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_widget(form.note2) }}
+                                    {{ form_errors(form.note2) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2">
+                                {{ form_label(form.note3) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_widget(form.note3) }}
+                                    {{ form_errors(form.note3) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+
+            <div class="box accordion" style="display: block;">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">領収書<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel" style="display: block;">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            {{ form_label(form.catalog_detail) }}
+                            <div class="col-sm-9 col-lg-10 ">
+                                {{ form_widget(form.catalog_detail) }}
+                                {{ form_errors(form.catalog_detail) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            {{ form_label(form.address_name_flg) }}
+                            <div class="col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.address_name_flg) }}
+                                {{ form_errors(form.address_name_flg) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+
+            </div>
+        </div><!-- /.col -->
+        <div class="col-md-3">
+            <div class="col_inner" id="aside_column">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="row text-center">
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                    <button class="btn btn-primary btn-block btn-lg"
+                                            onclick="document.receipt_pdf_form.submit();">この内容で作成する
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row text-center with-border">
+                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                    <button class="btn btn-default btn-block btn-lg" id="reset">リセット
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row text-center">
+                            <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                <p><a href="{{ url('admin_order_page', { page_no: app.session.get('eccube.admin.order.search.page_no')|default('1') }) }}?resume=1">検索画面に戻る</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        {# 保存する #}
+                        {{ form_widget(form.default) }}
+                        {{ form_errors(form.default) }}
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var inputDate = document.createElement('input');
+            inputDate.setAttribute('type', 'date');
+            if (inputDate.type !== 'date') {
+                $('input[id$=_issue_date]').datetimepicker({
+                    locale: 'ja',
+                    format: 'YYYY-MM-DD',
+                    useCurrent: true,
+                    showTodayButton: true
+                });
+            }
+
+            $("#reset").click(function (_e) {
+                $("#reset").attr('disabled',"disabled");
+                _e.preventDefault();
+                $("input[name='admin_receipt_pdf[title]']").val('{{ form.vars.value.title }}');
+                $("input[name='admin_receipt_pdf[issue_date]']").val('{{ "now"|date("Y-m-d") }}');
+                $("input[name='admin_receipt_pdf[message1]']").val('{{ form.vars.value.message1 }}');
+                $("input[name='admin_receipt_pdf[message2]']").val('{{ form.vars.value.message2 }}');
+                $("input[name='admin_receipt_pdf[message3]']").val('{{ form.vars.value.message3 }}');
+                $("input[name='admin_receipt_pdf[note1]']").val('{{ form.vars.value.note1 }}');
+                $("input[name='admin_receipt_pdf[note2]']").val('{{ form.vars.value.note2 }}');
+                $("input[name='admin_receipt_pdf[note3]']").val('{{ form.vars.value.note3 }}');
+                location.reload();
+            });
+
+            window.onload = function() {
+                if (!$("input[name='admin_receipt_pdf[issue_date]']").val()){
+                    $("input[name='admin_receipt_pdf[issue_date]']").val('{{ "now"|date("Y-m-d") }}');
+                }
+            }
+        });
+    </script>
+{% endblock %}

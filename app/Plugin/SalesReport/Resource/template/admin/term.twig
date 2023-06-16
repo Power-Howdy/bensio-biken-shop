@@ -1,0 +1,200 @@
+{#
+ This file is part of the Sales Report plugin
+
+Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+
+{% extends 'SalesReport/Resource/template/admin/index.twig' %}
+
+{% set report_title = '期間別集計' %}
+{% set action = url('admin_plugin_sales_report_term') %}
+{% set menus = ['admin_plugin_sales_report', 'admin_plugin_sales_report'] %}
+
+{% block chart %}
+    <script>
+        var graphData = {{ graphData|raw }};
+        window.onload = function() {
+            //create line chart
+            if(graphData != null) {
+                var dataSet = graphData.datasets;
+                graphData.datasets = [dataSet];
+                {% if options.unit is defined and (options.unit == 'byWeekDay' or options.unit == 'byHour') %}
+                    var config = {
+                        type: 'bar',
+                        data: graphData,
+                        options: {
+                            responsive: true,
+                            tooltips: {
+                                callbacks: {
+                                    label : function tooltipsRender(tooltipItem, graphData) {
+                                        var index = tooltipItem.index;
+                                        var tooltipData = graphData.datasets[0].data[index];
+                                        var tooltipLabel = graphData.labels[index];
+                                        return '購入合計 : ¥' + moneyFormat(tooltipData);
+                                    }
+                                }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        callback: function(value){
+                                            return Math.round(value).toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    };
+                {% else %}
+                    var config = {
+                        type: 'line',
+                        data: graphData,
+                        options: {
+                            responsive: true,
+                            tooltips: {
+                                callbacks: {
+                                    label : function tooltipsRender(tooltipItem, graphData) {
+                                        var index = tooltipItem.index;
+                                        var tooltipData = graphData.datasets[0].data[index];
+                                        var tooltipLabel = graphData.labels[index];
+                                        return '購入合計 : ¥' + moneyFormat(tooltipData);
+                                    }
+                                }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        callback: function(value){
+                                            return Math.round(value).toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    };
+                {% endif %}
+                var ctx = document.getElementById("chart").getContext("2d");
+                new Chart(ctx, config);
+            }
+            //export csv
+            $('#export-csv').click(function () {
+                var form = document.createElement("form");
+                form.setAttribute("method", 'POST');
+                form.setAttribute("action", "{{ url('admin_plugin_sales_report_export', { type : 'term' }) }}");
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            });
+        };
+    </script>
+{% endblock %}
+
+{% block option %}
+<div class="form-group">
+    {{ form_label(form.unit) }}
+    <div class="col-sm-9 col-lg-10 form-inline">
+        {{ form_widget(form.unit) }}
+        {{ form_errors(form.unit) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block table %}
+    {% if app.request.method == 'POST' %}
+        {% if rawData is not null %}
+            <div class="row">
+                <div class="box-header">
+                    <button type="button" class="btn btn-default pull-right" id="export-csv">CSVダウンロード</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="table_list">
+                            <div class="table-responsive with-border">
+                                <table class="table table-striped" id="term-table">
+                                    <colgroup>
+                                        <col />
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col />
+                                        <col />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center">期間</th>
+                                            <th style="text-align: center">購入件数</th>
+                                            <th style="text-align: center">男性</th>
+                                            <th style="text-align: center">女性</th>
+                                            <th style="text-align: center">不明</th>
+                                            <th style="text-align: center">男性 (会員)</th>
+                                            <th style="text-align: center">男性 (非会員)</th>
+                                            <th style="text-align: center">女性 (会員)</th>
+                                            <th style="text-align: center">女性 (非会員)</th>
+                                            <th style="text-align: center">購入合計(円)</th>
+                                            <th style="text-align: center">購入平均(円)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for date, row in rawData %}
+                                            <tr>
+                                                <td>{{ date }}</td>
+                                                <td class="text-right">{{ row.time|number_format }}</td>
+
+                                                <td class="text-right">{{ row.male|number_format }}</td>
+                                                <td class="text-right">{{ row.female|number_format }}</td>
+                                                <td class="text-right">{{ row.other|number_format }}</td>
+                                                <td class="text-right">{{ row.member_male|number_format }}</td>
+                                                <td class="text-right">{{ row.nonmember_male|number_format }}</td>
+                                                <td class="text-right">{{ row.member_female|number_format }}</td>
+                                                <td class="text-right">{{ row.nonmember_female|number_format }}</td>
+
+                                                <td class="price-format text-right">
+                                                    {{ row.price|number_format }}
+                                                    <span class="hidden">{{ row.price }}</span>
+                                                </td>
+                                                <td class="price-format text-right">
+                                                    {% if row.time > 0 %}
+                                                        {{ (row.price / row.time)|round(2, 'floor')|number_format }}
+                                                    {% else %}
+                                                        0
+                                                    {% endif %}
+                                                    <span class="hidden">
+                                                        {% if row.time > 0 %}
+                                                            {{ (row.price / row.time)|round(2, 'floor') }}
+                                                        {% else %}
+                                                            0
+                                                        {% endif %}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="box-header with-arrow">
+                            <h3 class="box-title">集計期間にデータがありませんでした。</h3>
+                        </div><!-- /.box-header -->
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

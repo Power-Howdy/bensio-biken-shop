@@ -1,0 +1,96 @@
+# 管理画面
+## 管理画面 > 商品登録( 編集 ) > ポイント付与率設定
+admin.product.edit.initialize:
+    - [onAdminProductEditInitialize, NORMAL]
+admin.product.edit.complete:
+    - [onAdminProductEditComplete, NORMAL]
+
+## 管理画面 > 会員登録( 編集 ) > 保有ポイント設定
+admin.customer.edit.index.initialize:
+    - [onAdminCustomerEditIndexInitialize, NORMAL]
+admin.customer.edit.index.complete:
+    - [onAdminCustomerEditIndexComplete, NORMAL]
+
+## 管理画面 > 受注登録 (編集) > 利用ポイントフォーム生成
+admin.order.edit.index.initialize:
+    - [onAdminOrderEditIndexInitialize, NORMAL]
+admin.order.edit.index.complete:
+    - [onAdminOrderEditIndexComplete, NORMAL]
+
+## 管理画面 > 受注一覧
+admin.order.delete.complete:
+    - [onAdminOrderDeleteComplete, NORMAL]
+
+## 管理画面 > メール通知
+admin.order.mail.index.complete:
+    - [onAdminOrderMailIndexComplete, NORMAL]
+
+admin.order.mail.mail.all.complete:
+    - [onAdminOrderMailIndexComplete, NORMAL]
+
+# フロント画面
+## フロント画面 > 商品購入確認完了(ポイント利用処理)
+front.shopping.confirm.processing:
+    - [onFrontShoppingConfirmProcessing, NORMAL]
+## フロント画面 > 商品購入完了(ポイント登録)
+service.shopping.notify.complete:
+    - [onServiceShoppingNotifyComplete, NORMAL]
+## フロント画面 > 商品購入完了の画面
+Shopping/complete.twig:
+    - [onRenderShoppingComplete, NORMAL]
+
+## 配送先の変更
+front.shopping.delivery.complete:
+    - [onFrontChangeTotal, NORMAL]
+
+## 支払い方法の変更
+front.shopping.payment.complete:
+    - [onFrontChangeTotal, NORMAL]
+
+## お届け先の変更
+front.shopping.shipping.complete:
+    - [onFrontChangeTotal, NORMAL]
+front.shopping.shipping.edit.complete:
+    - [onFrontChangeTotal, NORMAL]
+
+
+# 画面レンダリング
+## 管理画面 > 受注編集
+Admin/Order/edit.twig:
+    - [onRenderAdminOrderEdit, NORMAL]
+
+## 管理画面 > メール通知
+Admin/Order/mail_confirm.twig:
+    - [onRenderAdminOrderMailConfirm, NORMAL]
+
+Admin/Order/mail_all_confirm.twig:
+    - [onRenderAdminOrderMailConfirm, NORMAL]
+
+## マイページ
+Mypage/index.twig:
+    - [onRenderMyPageIndex, NORMAL]
+
+## フロント画面 > 商品購入確認画面
+Shopping/index.twig:
+    - [onRenderShoppingIndex, NORMAL]
+
+## フロント画面 > 商品詳細画面
+Product/detail.twig:
+    - [onRenderProductDetail, NORMAL]
+
+## フロント画面 > カート
+Cart/index.twig:
+    - [onRenderCart, NORMAL]
+
+## フロント画面 > マイページ > 履歴
+Mypage/history.twig:
+    - [onRenderHistory, NORMAL]
+
+# メール
+## 受注メール
+mail.order:
+    - [onMailOrderComplete, NORMAL]
+
+##  メール通知
+mail.admin.order:
+   - [onMailOrderComplete, NORMAL]

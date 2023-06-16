@@ -1,0 +1,71 @@
+Eccube\Entity\PageLayout:
+    type: entity
+    table: dtb_page_layout
+    repositoryClass: Eccube\Repository\PageLayoutRepository
+    indexes:
+        # requires a length on MySQL
+        # dtb_page_layout_url_idx:
+        #     columns:
+        #         - url
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            column: page_id
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: text
+            nullable: true
+            column: page_name
+        url:
+            type: text
+            nullable: false
+        file_name:
+            type: text
+            nullable: true
+        edit_flg:
+            type: smallint
+            nullable: true
+            unsigned: false
+            options:
+                default: '1'
+        author:
+            type: text
+            nullable: true
+        description:
+            type: text
+            nullable: true
+        keyword:
+            type: text
+            nullable: true
+        update_url:
+            type: text
+            nullable: true
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+        meta_robots:
+            type: text
+            nullable: true
+        meta_tags:
+            type: text
+            nullable: true
+    oneToMany:
+        BlockPositions:
+            targetEntity: Eccube\Entity\BlockPosition
+            cascade: ["persist", "remove"]
+            mappedBy: PageLayout
+            indexBy: block_id
+    manyToOne:
+        DeviceType:
+            targetEntity: Eccube\Entity\Master\DeviceType
+            joinColumn:
+                name: device_type_id
+                referencedColumnName: id
+    lifecycleCallbacks: {  }

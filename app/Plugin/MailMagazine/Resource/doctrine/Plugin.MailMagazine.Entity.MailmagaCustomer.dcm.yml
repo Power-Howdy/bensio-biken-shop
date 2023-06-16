@@ -1,0 +1,33 @@
+Plugin\MailMagazine\Entity\MailmagaCustomer:
+    type: entity
+    table: plg_mailmaga_customer
+    repositoryClass: Plugin\MailMagazine\Repository\MailmagaCustomerRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: id
+            generator:
+                strategy: AUTO
+    fields:
+        customer_id:
+            type: integer
+            nullable: false
+        mailmaga_flg:
+            type: smallint
+            nullable: false
+            default: '0'
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    lifecycleCallbacks: {  }

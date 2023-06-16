@@ -1,0 +1,2 @@
+coupon_id,coupon_cd,coupon_type,coupon_name,discount_type,coupon_use_time,coupon_release,discount_price,discount_rate,enable_flag,coupon_member,coupon_lower_limit,available_from_date,available_to_date,del_flg,create_date,update_date
+1,70y8e2wd2pkw,1,クーポンテスト,1,1,2,3000,,1,1,4000,"2021-05-16 00:00:00","2021-05-31 00:00:00",0,"2021-05-17 15:38:21","2021-05-17 15:39:48"

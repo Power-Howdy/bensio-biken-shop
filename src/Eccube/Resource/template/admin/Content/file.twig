@@ -1,0 +1,180 @@
+{#
+This file is part of EC-CUBE
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+http://www.ec-cube.co.jp/
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['content', 'file'] %}
+
+{% block title %}コンテンツ管理{% endblock %}
+{% block sub_title %}ファイル管理{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+<script src="{{ app.config.admin_urlpath }}/assets/js/file_manager.js"></script>
+<script>
+{{ tpl_javascript|raw }}
+    $(function() {
+        var bread_crumbs = {{ now_dir_list|raw }};
+        var file_path = '{{ html_dir }}';
+        var $delimiter = '<span>&nbsp;&gt;&nbsp;</span>';
+        var $node = $('#bread');
+        var total = bread_crumbs.length;
+        for (var i in bread_crumbs) {
+            file_path += '/' + bread_crumbs[i];
+            $('<a href="javascript:;" onclick="eccube.fileManager.openFolder(\'' + file_path + '\'); return false;" />')
+                .text(bread_crumbs[i])
+                .appendTo($node);
+            if (i < total - 1) $node.append($delimiter);
+        }
+    });
+
+    eccube.fileManager.IMG_FOLDER_CLOSE   = "<svg class='cb cb-folder'><use xlink:href='#cb-folder' /></svg>";  // フォルダクローズ時画像
+    eccube.fileManager.IMG_FOLDER_OPEN    = "<svg class='cb cb-folder-open'><use xlink:href='#cb-folder-open' /></svg>";   // フォルダオープン時画像
+    eccube.fileManager.IMG_PLUS           = "<svg class='cb cb-plus-square'><use xlink:href='#cb-plus-square' /></svg>";          // プラスライン
+    eccube.fileManager.IMG_MINUS          = "<svg class='cb cb-minus-square'><use xlink:href='#cb-minus-square' /></svg>";         // マイナスライン
+    eccube.fileManager.IMG_NORMAL         = "　";         // スペース
+    {{ tpl_onload|raw }}
+</script>
+
+{% endblock javascript %}
+{% block main %}
+<div class="row" id="aside_wrap">
+    <form name="form1" id="form1" method="post" action="?"  enctype="multipart/form-data">
+    <input type="hidden" name="mode" value="" />
+    <input type="hidden" name="now_file" value="{{ tpl_now_dir }}" />
+    <input type="hidden" name="now_dir" value="{{ tpl_now_dir }}" />
+    <input type="hidden" name="tree_select_file" value="{{ tpl_now_dir }}" />
+    <input type="hidden" name="tree_status" value="" />
+    <input type="hidden" name="select_file" value="" />
+
+        <div id="upload_wrap" class="col-md-9">
+            <div id="upload_list_box" class="box">
+                <div id="upload_box" class="box-header form-horizontal">
+                    {{ form_widget(form._token) }}
+                    <div id="upload_box__body" class="form-group">
+                        <label class="col-sm-4 col-lg-3 control-label">ファイルのアップロード</label>
+                        <div id="upload_box__file" class="col-sm-8 col-lg-9 padT07">
+                            {{ form_widget(form.file) }}
+                            <div class="marT10"><a class="btn btn-default btn-sm" href="javascript;" onclick="eccube.fileManager.setTreeStatus('tree_status');eccube.setModeAndSubmit('upload','',''); return false;">アップロード</a></div>
+                        </div>
+                    </div>
+                    <div id="create_box__create_file" class="form-group form-inline">
+                        <label class="col-sm-4 col-lg-3 control-label">フォルダ作成</label>
+                        <div class="col-sm-8 col-lg-9">
+                            {{ form_widget(form.create_file) }}
+                            <a class="btn btn-default btn-sm" href="javascript:" onclick="eccube.fileManager.setTreeStatus('tree_status');eccube.setModeAndSubmit('create','',''); return false;">作成</a>
+                        </div>
+                    </div>
+                {% if error is not null %}
+                    <p id="upload_box__error_message" class="text-danger errormsg">{{ error.message }}</p>
+                {% endif %}
+
+                </div><!-- /.box-header -->
+
+                <div id="bread" style="margin-left: 10px;"></div>
+                <div id="result_list" class="box-body">
+                    <div id="result_list__list_box" class="table_list">
+                        <div id="result_list__list" class="table-responsive">
+                            <table class="table table-striped with-border">
+                                <thead>
+                                    <tr id="result_list__header">
+                                        <th id="result_list__header_name">ファイル名</th>
+                                        <th id="result_list__header_size">サイズ</th>
+                                        <th id="result_list__header_time">更新日付</th>
+                                        <th id="result_list__header_view">表示</th>
+                                        <th id="result_list__header_download">ダウンロード</th>
+                                        <th id="result_list__header_delete">削除</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                {% if tpl_is_top_dir == false %}
+                    <tr id="parent_dir" onclick="eccube.setValue('select_file', '{{ tpl_parent_dir }}', 'form1'); eccube.fileManager.selectFile('parent_dir', '#808080');" onDblClick="eccube.fileManager.setTreeStatus('tree_status');eccube.fileManager.doubleClick(arrTree, '{{ tpl_parent_dir }}', true, '{{ tpl_now_dir }}', true)" style="">
+                        <td id="result_list__name"><svg class="cb cb-ellipsis-h"><use xlink:href="#cb-ellipsis-h" /></svg></td>
+                        <td id="result_list__size">&nbsp;</td>
+                        <td id="result_list__time">&nbsp;</td>
+                        <td id="result_list__view">&nbsp;</td>
+                        <td id="result_list__download">&nbsp;</td>
+                        <td id="result_list__delete">&nbsp;</td>
+                    </tr>
+                {% endif %}
+                {% for file in arrFileList %}
+                    <tr id="{{ loop.index }}" style="">
+                        <td id="result_list__name--{{ loop.index }}" class="file-name" onDblClick="eccube.fileManager.setTreeStatus('tree_status');eccube.fileManager.doubleClick(arrTree, '{{ file.file_path }}', {% if file.is_dir %}true{% else %}false{% endif %} '{{ tpl_now_dir }}', false)">
+                            {% if file.is_dir %}
+                                <svg class="cb cb-folder"><use xlink:href="#cb-folder" /></svg>
+                            {% else %}
+                                <svg class="cb cb-file-text"><use xlink:href="#cb-file-text" /></svg>
+                            {% endif %}
+                            {{ file.file_name }}
+                        </td>
+                        <td id="result_list__size--{{ loop.index }}" class="text-right">
+                            {{ file.file_size }}
+                        </td>
+                        <td id="result_list__time--{{ loop.index }}" class="text-center">
+                            {{ file.file_time }}
+                        </td>
+                        <td id="result_list__view--{{ loop.index }}" class="text-center">
+                            {% if file.is_dir %}
+                                <a href="javascript:;" onclick="eccube.setValue('tree_select_file', '{{ file.file_path }}', 'form1'); eccube.fileManager.selectFile('{{ loop.index }}', '#808080');eccube.setModeAndSubmit('move','',''); return false;">表示</a>
+                            {% else %}
+                                <a href="{{ url('admin_content_file_view') }}?file={{ file.file_path|e('url') }}" target="_blank">表示</a>
+                            {% endif %}
+                        </td>
+                        {% if file.is_dir %}
+                            {# ディレクトリはダウンロード不可 #}
+                            <td id="result_list__download--{{ loop.index }}" class="text-center">-</td>
+                        {% else %}
+                            <td id="result_list__download--{{ loop.index }}"class="text-center">
+                                <a href="{{ url('admin_content_file_download') }}?select_file={{ file.file_path|e('url') }}" target="_blank">ダウンロード</a>
+                            </td>
+                        {% endif %}
+                        <td id="result_list__delete--{{ loop.index }}" class="text-center">
+                            <a href="{{ url('admin_content_file_delete', { 'select_file': file.file_path}) }}" {{ csrf_token_for_anchor() }} data-method="delete" data-message="一度削除したデータは元に戻せません。削除してもよろしいですか？">削除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- /.box-body --> 
+            </div>
+        </div><!-- /.col -->
+        
+        <div class="col-md-3" id="aside_column">
+            <div id="common_box" class="col_inner">
+                <div id="tree_box" class="box no-header">
+                    <div id="tree_box__body" class="box-body">
+                        <div id="tree_box__tree" class="row">
+                            <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                <div id="tree"></div>
+                            </div>
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+        </div><!-- /.col --> 
+
+    </form>
+</div>
+
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,193 @@
+{#
+ This file is part of the Sales Report plugin
+
+Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+
+{% extends 'default_frame.twig' %}
+
+{% block title %}売上管理{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ app.config.admin_urlpath }}/assets/css/bootstrap-datetimepicker.min.css">
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js"></script>
+    {% block chart %}{% endblock %}
+    <script>
+        $(function () {
+            var inputDate = document.createElement('input');
+            inputDate.setAttribute('type', 'date');
+            if (inputDate.type !== 'date') {
+                $('input[id$=_start]').datetimepicker({
+                    locale: 'ja',
+                    format: 'YYYY-MM-DD',
+                    useCurrent: false
+                });
+
+                $('input[id$=_end]').datetimepicker({
+                    locale: 'ja',
+                    format: 'YYYY-MM-DD',
+                    showTodayButton: true
+                });
+
+                $('input[id$=monthly]').datetimepicker({
+                    locale: 'ja',
+                    format: 'YYYY-MM-01',
+                    showTodayButton: true
+                });
+            }
+
+            $("#btn-monthly").on("click", function () {
+                $("#{{ form.term_type.vars.id }}").val('monthly');
+                document.form1.submit();
+            });
+
+            $("#btn-term").on("click", function () {
+                $("#{{ form.term_type.vars.id }}").val('term');
+                document.form1.submit();
+            });
+
+        });
+
+        function moneyFormat(money) {
+            return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        jQuery.fn.tableToCSV = function() {
+            var clean_text = function(text){
+                text = text.replace(/"/g, '""');
+                return '"' + text + '"';
+            };
+
+            $(this).each(function(){
+                var table = $(this);
+                var caption = $('.box-title').text();
+                var title = [];
+                var rows = [];
+
+                $(this).find('tr').each(function(){
+                    var data = [];
+                    $(this).find('th').each(function(){
+                        var text = $(this).text();
+                        title.push(text);
+                    });
+                    $(this).find('td').each(function(){
+                        var td = $(this);
+                        var text = td.text();
+                        if(td.hasClass('price-format')) {
+                            td.find('span').each(function() {
+                                text = $(this).text().trim();
+                                if (text != '-') {
+                                    text = Math.round(text);
+                                } else {
+                                    text = 0;
+                                }
+                                data.push(text);
+                            });
+                        } else {
+                            data.push(text);
+                        }
+                    });
+                    data = data.join(",");
+                    rows.push(data);
+                });
+                title = title.join(",");
+                rows = rows.join("\n");
+
+                var csv = title + rows;
+                var ts = new Date();
+                var fileName;
+                ts = ts.getFullYear().toString() + (ts.getMonth() + 1) + ts.getDate() + ts.getHours() + ts.getMinutes() + ts.getSeconds();
+
+                if(caption == ""){
+                    fileName = ts + ".csv";
+                } else {
+                    fileName = caption + "_" + ts + ".csv";
+                }
+
+                // if microsoft IE
+                if (navigator.msSaveBlob) {
+                    navigator.msSaveBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), fileName);
+                } else {
+                    var uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                    var download_link = document.createElement('a');
+                    download_link.href = uri;
+                    download_link.download = fileName;
+                    document.body.appendChild(download_link);
+                    download_link.click();
+                    document.body.removeChild(download_link);
+                }
+
+            });
+        };
+
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <form role="form" name="form1" id="form1" method="post" action="{{ action }}" novalidate>
+        {{ form_widget(form._token) }}
+        {{ form_widget(form.term_type) }}
+        <div class="row" id="aside_wrap">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <div class="box form-horizontal">
+                    <div class="box-header">
+                        <h3 class="box-title">{{ report_title }}</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">月度集計</label>
+                            <div class="col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.monthly_year) }} 年 {{ form_widget(form.monthly_month) }} 月
+                                {{ form_errors(form.monthly_year) }}{{ form_errors(form.monthly_month) }}
+                                <a id="btn-monthly" class="btn btn-default">月度で集計</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.term_start) }}
+                            <div class="col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.term_start, {'attr': {'placeholder': '年-月-日'}}) }} ～ {{ form_widget(form.term_end, {'attr': {'placeholder': '年-月-日'}}) }}
+                                <a id="btn-term" class="btn btn-default">期間で集計</a>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin: auto 0 !important; ">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-9 col-lg-10 form-inline">
+                                {{ form_errors(form.term_start) }}
+                                {{ form_errors(form.term_end) }}
+                            </div>
+                        </div>
+
+                        {% block option %}{% endblock %}
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+        </div>
+
+        {% if app.request.method == 'POST' and rawData is not null %}
+        <div class="row">
+            <div class="col-sm-12 col-md-8 col-md-offset-2">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+
+        {% block table %}{% endblock %}
+
+    </form>
+{% endblock main %}

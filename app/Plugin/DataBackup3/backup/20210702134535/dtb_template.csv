@@ -1,0 +1,5 @@
+template_id,device_type_id,template_code,template_name,create_date,update_date
+1,10,default,デフォルト,"2021-04-20 16:22:50","2021-04-20 16:22:50"
+2,1,mobile,モバイル,"2021-04-20 16:22:50","2021-04-20 16:22:50"
+4,2,sphone,スマートフォン,"2021-04-20 16:22:50","2021-04-20 16:22:50"
+5,10,mgtemplate,mgtemplate,"2021-04-20 16:42:53","2021-04-20 16:42:53"

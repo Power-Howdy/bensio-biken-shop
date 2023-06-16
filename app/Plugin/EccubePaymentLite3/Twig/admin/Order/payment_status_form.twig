@@ -1,0 +1,15 @@
+<script>
+    $(function(){
+        $('#payment_status_box__payment_method').appendTo($('#payment_info_box__body'));
+    });
+</script>
+
+<div style="display: none;">
+    <dl id="payment_status_box__payment_method" class="dl-horizontal">
+        <dt>イプシロン決済ステータス</dt>
+        <dd class="form-group form-inline">
+            {{ form_widget(form.PaymentStatus) }}
+            {{ form_errors(form.PaymentStatus) }}
+        </dd>
+    </dl>
+</div>

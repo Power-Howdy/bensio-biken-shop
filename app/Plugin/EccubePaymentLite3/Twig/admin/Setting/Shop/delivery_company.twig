@@ -1,0 +1,19 @@
+<style>
+    #delivery_DeliveryCompany > div.radio-inline {
+        display: block;
+        padding-left: 0;
+    }
+</style>
+<script>
+    $(function(){
+        let field = $('#delivery_company_form_type').html();
+        // Clear
+        $('#delivery_company_form_type').empty();
+        // Append
+        $(field).appendTo($('#delivery_info_box__body'));
+    });
+</script>
+
+<div style="display: none;" id="delivery_company_form_type">
+    {{ form_row(form.DeliveryCompany) }}
+</div>

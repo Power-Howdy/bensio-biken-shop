@@ -1,0 +1,224 @@
+Plugin\EccubePaymentLite3\Entity\RegularOrder:
+    type: entity
+    table: plg_paylite_regular_order
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\RegularOrderRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: regular_order_id
+            generator:
+                strategy: AUTO
+    fields:
+        pre_order_id:
+            type: text
+            nullable: true
+        message:
+            type: text
+            nullable: true
+        name01:
+            type: text
+            nullable: true
+            column: order_name01
+        name02:
+            type: text
+            nullable: true
+            column: order_name02
+        kana01:
+            type: text
+            nullable: true
+            column: order_kana01
+        kana02:
+            type: text
+            nullable: true
+            column: order_kana02
+        company_name:
+            type: text
+            nullable: true
+            column: order_company_name
+        email:
+            type: text
+            nullable: true
+            column: order_email
+        tel01:
+            type: text
+            nullable: true
+            column: order_tel01
+        tel02:
+            type: text
+            nullable: true
+            column: order_tel02
+        tel03:
+            type: text
+            nullable: true
+            column: order_tel03
+        fax01:
+            type: text
+            nullable: true
+            column: order_fax01
+        fax02:
+            type: text
+            nullable: true
+            column: order_fax02
+        fax03:
+            type: text
+            nullable: true
+            column: order_fax03
+        zip01:
+            type: text
+            nullable: true
+            column: order_zip01
+        zip02:
+            type: text
+            nullable: true
+            column: order_zip02
+        zipcode:
+            type: text
+            nullable: true
+            column: order_zipcode
+        addr01:
+            type: text
+            nullable: true
+            column: order_addr01
+        addr02:
+            type: text
+            nullable: true
+            column: order_addr02
+        birth:
+            type: datetime
+            nullable: true
+            column: order_birth
+        subtotal:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        discount:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 0
+            options:
+                default: '0'
+        delivery_fee_total:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        charge:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        tax:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        total:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        payment_total:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        payment_method:
+            type: text
+            nullable: true
+        note:
+            type: text
+            nullable: true
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+        order_date:
+            type: datetime
+            nullable: true
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            options:
+                default: '0'
+        trans_code:
+            type: text
+            nullable: true
+        regular_order_count:
+            type: smallint
+            nullable: true
+            options:
+                default: '1'
+    manyToOne:
+        Customer:
+            targetEntity: Eccube\Entity\Customer
+            inversedBy: Orders
+            joinColumn:
+                name: customer_id
+                referencedColumnName: customer_id
+        Country:
+            targetEntity: Eccube\Entity\Master\Country
+            joinColumn:
+                name: order_country_id
+                referencedColumnName: id
+        Pref:
+            targetEntity: Eccube\Entity\Master\Pref
+            joinColumn:
+                name: order_pref
+                referencedColumnName: id
+        Sex:
+            targetEntity: Eccube\Entity\Master\Sex
+            joinColumn:
+                name: order_sex
+                referencedColumnName: id
+        Job:
+            targetEntity: Eccube\Entity\Master\Job
+            joinColumn:
+                name: order_job
+                referencedColumnName: id
+        Payment:
+            targetEntity: Eccube\Entity\Payment
+            joinColumn:
+                name: payment_id
+                referencedColumnName: payment_id
+        DeviceType:
+            targetEntity: Eccube\Entity\Master\DeviceType
+            joinColumn:
+                name: device_type_id
+                referencedColumnName: id
+        RegularStatus:
+            targetEntity: Plugin\EccubePaymentLite3\Entity\Master\RegularStatus
+            joinColumn:
+                name: regular_status
+                referencedColumnName: id
+        FirstOrder:
+            targetEntity: Eccube\Entity\Order
+            joinColumn:
+                name: first_order_id
+                referencedColumnName: order_id
+        LastOrder:
+            targetEntity: Eccube\Entity\Order
+            joinColumn:
+                name: last_order_id
+                referencedColumnName: order_id
+    oneToMany:
+        RegularOrderDetails:
+            targetEntity: Plugin\EccubePaymentLite3\Entity\RegularOrderDetail
+            mappedBy: RegularOrder
+            orderBy:
+                id: ASC
+            cascade: ["persist"]
+        RegularShippings:
+            targetEntity: Plugin\EccubePaymentLite3\Entity\RegularShipping
+            mappedBy: RegularOrder
+            orderBy:
+                id: ASC
+            cascade: ["persist"]
+    lifecycleCallbacks: {  }

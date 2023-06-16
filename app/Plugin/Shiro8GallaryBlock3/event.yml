@@ -1,0 +1,4 @@
+admin.product.edit.initialize:
+    - [onAdminProductFormInitialize, NORMAL]
+admin.product.edit.complete:
+    - [onAdminProductEditComplete, NORMAL]

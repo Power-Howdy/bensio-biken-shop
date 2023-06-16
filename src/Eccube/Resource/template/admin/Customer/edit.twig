@@ -1,0 +1,304 @@
+{#
+/*
+* This file is part of EC-CUBE
+*
+* Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+*
+* http://www.ec-cube.co.jp/
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+#}
+
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['customer', 'customer_edit'] %}
+
+{% block title %}会員管理{% endblock %}
+{% block sub_title %}会員登録・編集{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+<script src="//ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script>
+    $(function() {
+        $('#zip-search').click(function() {
+            AjaxZip3.zip2addr('admin_customer[zip][zip01]', 'admin_customer[zip][zip02]', 'admin_customer[address][pref]', 'admin_customer[address][addr01]');
+        });
+    });
+</script>
+{% endblock javascript %}
+
+{% block main %}
+<div class="row" id="aside_wrap">
+    <form name="customer_form" role="form" id="customer_form" method="post" action="{%- if Customer.id %}{{ url('admin_customer_edit', { id : Customer.id }) }}{% else %}{{ url('admin_customer_new') }}{% endif -%}">
+        {{ form_widget(form._token) }}
+        <div id="detail_wrap" class="col-md-9">
+            <div id="detail_box" class="box accordion">
+                <div id="detail_box__header" class="box-header toggle active">
+                    <h3 class="box-title">会員情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div id="detail_box__body" class="box-body accpanel" style="display: block;">
+                    <div class="form-horizontal">
+                        {# 会員ID #}
+                        {% if Customer.id %}
+                        <div id="detail_box__id" class="form-group">
+                            <label class="col-sm-3 col-lg-2 control-label">会員ID</label>
+                            <div class="col-sm-9 col-lg-10">{{ Customer.id }}</div>
+                        </div>
+                        {% endif %}
+                        {# 名前 #}
+                        <div id="detail_box__name" class="form-group">
+                            {{ form_label(form.name) }}
+                            <div class="col-sm-9 col-lg-10 input_name form-inline">
+                                {{ form_widget(form.name.name01) }}
+                                {{ form_widget(form.name.name02) }}
+                                {{ form_errors(form.name.name01) }}
+                                {{ form_errors(form.name.name02) }}
+                            </div>
+                        </div>
+                        {# 名前(カナ) #}
+                        <div id="detail_box__kana" class="form-group">
+                            {{ form_label(form.kana) }}
+                            <div class="col-sm-9 col-lg-10 input_name form-inline">
+                                {{ form_widget(form.kana.kana01) }}
+                                {{ form_widget(form.kana.kana02) }}
+                                {{ form_errors(form.kana.kana01) }}
+                                {{ form_errors(form.kana.kana02) }}
+                            </div>
+                        </div>
+                        {# 会社名 #}
+                        <div id="detail_box__company_name" class="form-group">
+                            {{ form_label(form.company_name) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.company_name) }}
+                                {{ form_errors(form.company_name) }}
+                            </div>
+                        </div>
+                        {# 住所：郵便番号 #}
+                        <div id="detail_box__address" class="form-group">
+                            {{ form_label(form.address) }}
+                            <div id="detail_box__zip" class="col-sm-9 col-lg-10 input_zip form-inline">
+                                〒{{ form_widget(form.zip.zip01) }}-{{ form_widget(form.zip.zip02) }}
+                                {{ form_errors(form.zip) }}
+                                {{ form_errors(form.zip.zip01) }}
+                                {{ form_errors(form.zip.zip02) }}
+                                <span><button type="button" id="zip-search" class="btn btn-default btn-sm">郵便番号から自動入力</button></span>
+                            </div>
+                        </div>
+                        {# 住所：都道府県 #}
+                        <div class="form-group">
+                            <div id="detail_box__pref" class="col-sm-offset-2 col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.address.pref) }}
+                                {{ form_errors(form.address.pref) }}
+                            </div>
+                        </div>
+                        {# 住所：住所1 #}
+                        <div class="form-group">
+                            <div id="detail_box__addr01" class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                {{ form_widget(form.address.addr01, { attr : { placeholder : '市区町村名（例：千代田区神田神保町）'}} ) }}
+                                {{ form_errors(form.address.addr01) }}
+                            </div>
+                        </div>
+                        {# 住所：住所2 #}
+                        <div class="form-group">
+                            <div id="detail_box__addr02" class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                {{ form_widget(form.address.addr02, { attr : { placeholder : '番地・ビル名（例：1-3-5）' }}) }}
+                                {{ form_errors(form.address.addr02) }}
+                            </div>
+                        </div>
+                        {# メールアドレス #}
+                        <div id="detail_box__email" class="form-group">
+                            {{ form_label(form.email) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.email) }}
+                                {{ form_errors(form.email) }}
+                            </div>
+                        </div>
+                        {# 電話番号 #}
+                        <div id="detail_box__tel" class="form-group">
+                            {{ form_label(form.tel) }}
+                            <div class="col-sm-9 col-lg-10 input_tel form-inline">
+                                {{ form_widget(form.tel.tel01) }}-{{ form_widget(form.tel.tel02) }}-{{ form_widget(form.tel.tel03) }}
+                                {{ form_errors(form.tel.tel01) }}
+                                {{ form_errors(form.tel.tel02) }}
+                                {{ form_errors(form.tel.tel03) }}
+                            </div>
+                        </div>
+                        {# FAX番号 #}
+                        <div id="detail_box__fox" class="form-group">
+                            {{ form_label(form.fax) }}
+                            <div class="col-sm-9 col-lg-10 input_tel form-inline">
+                                {{ form_widget(form.fax.fax01) }}-{{ form_widget(form.fax.fax02) }}-{{ form_widget(form.fax.fax03) }}
+                                {{ form_errors(form.fax.fax01) }}
+                                {{ form_errors(form.fax.fax02) }}
+                                {{ form_errors(form.fax.fax03) }}
+                            </div>
+                        </div>
+                        {# LINE ID #}
+                        <div id="detail_box__lineid" class="form-group">
+                            {{ form_label(form.lineid) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.lineid) }}
+                                {{ form_errors(form.lineid) }}
+                            </div>
+                        </div>
+                        {# パスワード #}
+                        <div id="detail_box__password_first" class="form-group">
+                            {{ form_label(form.password.first) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.password.first, { type : 'password'}) }}
+                                {{ form_errors(form.password.first) }}
+                            </div>
+                        </div>
+                        <div id="detail_box__password_second" class="form-group">
+                            {{ form_label(form.password.second) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.password.second, { type : 'password'}) }}
+                                {{ form_errors(form.password.second) }}
+                            </div>
+                        </div>
+                        {# 性別 #}
+                        <div id="detail_box__sex" class="form-group">
+                            {{ form_label(form.sex) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.sex) }}
+                                {{ form_errors(form.sex) }}
+                            </div>
+                        </div>
+                        {# 職業 #}
+                        <div id="detail_box__job" class="form-group">
+                            {{ form_label(form.job) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.job) }}
+                                {{ form_errors(form.job) }}
+                            </div>
+                        </div>
+                        {# 生年月日 #}
+                        <div id="detail_box__birth" class="form-group">
+                            {{ form_label(form.birth) }}
+                            <div class="col-sm-9 col-lg-10">
+                                <div class="form-inline">
+                                    {{ form_widget(form.birth) }}
+                                    {{ form_errors(form.birth) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="extra-form">
+                            {% for f in form.getIterator %}
+                                {% if f.vars.name matches '[^plg*]' %}
+                                    {{ form_row(f) }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+
+            {% if Customer.id %}
+            <div id="history_box" class="box accordion">
+                <div id="history_box__toggle" class="box-header toggle">
+                    <h3 class="box-title">購入履歴<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div id="history_box__body" class="box-body accpanel">
+                    {% if Customer.Orders|length > 0 %}
+                    <div id="history_box__list" class="table_list">
+                        <div class="table-responsive with-border">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr id="history_box__list_header">
+                                        <th id="history_box__header_order_date">注文日時</th>
+                                        <th id="history_box__header_order_id">受注番号</th>
+                                        <th id="history_box__header_order_total">購入金額</th>
+                                        <th id="history_box__header_commit_date">発送日</th>
+                                        <th id="history_box__header_payment_method">支払方法</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for Order in Customer.Orders %}
+                                    <tr id="history_box__item--{{ Order.id }}">
+                                        <td id="history_box__order_date--{{ Order.id }}" class="member_id">
+                                            {{ Order.order_date|date_format }}
+                                        </td>
+                                        <td id="history_box__order_id--{{ Order.id }}" class="member_name">
+                                            <a href="{{ url('admin_order_edit', { 'id' : Order.id }) }}">{{ Order.id }}</a>
+                                        </td>
+                                        <td id="history_box__order_total--{{ Order.id }}" class="member_tel">
+                                            {{ Order.total|price }}
+                                        </td>
+                                        <td id="history_box__commit_date--{{ Order.id }}" class="member_mail">
+                                            {{ Order.commit_date|date_format|default('未発送') }}
+                                        </td>
+                                        <td id="history_box__payment_method--{{ Order.id }}" class="member_mail">
+                                            {{ Order.payment_method }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div id="history_box__header" class="data-empty"><svg class="cb cb-inbox"> <use xlink:href="#cb-inbox" /></svg><p>データはありません</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div id="detail_box__footer" class="row hidden-xs hidden-sm">
+                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                    <p><a href="{{ url('admin_customer_page', { page_no : app.session.get('eccube.admin.customer.search.page_no')|default('1') } ) }}?resume=1">検索画面に戻る</a></p>
+                </div>
+            </div>
+
+        </div><!-- /.col -->
+
+        <div id="aside_column" class="col-md-3">
+            <div id="common_box" class="col_inner">
+                <div id="button_box" class="box no-header">
+                    <div id="button_box__body" class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="button_box__status" class="form-group">
+                                    {{ form_widget(form.status) }}
+                                    {{ form_errors(form.status) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div id="button_box__insert_button" class="row text-center">
+                            <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                <button class="btn btn-primary btn-block btn-lg" type="submit">会員情報を登録</button>
+                            </div>
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+                <div id="shop_note_box" class="box">
+                    <div id="shop_note_box__header" class="box-header">
+                        <h3 class="box-title">ショップ用メモ欄</h3>
+                    </div><!-- /.box-header -->
+                    <div id="shop_note_box__note" class="box-body">
+                        {{ form_widget(form.note) }}
+                        {{ form_errors(form.note) }}
+                    </div>
+                </div><!-- /.box -->
+
+            </div>
+        </div><!-- /.col -->
+    </form>
+</div>
+{% endblock %}

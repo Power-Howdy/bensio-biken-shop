@@ -1,0 +1,43 @@
+<script>
+    $(function (){
+        $('#payment_list').after(
+            '<div id="ec_trans_wrap" class="row">' +
+                '<div id="ec_trans_list_box" class="col-md-12">' +
+                    '<div id="ec_trans_list_box__body" class="box">' +
+                        '<div id="ec_trans_list_box__header" class="box-header">' +
+                            '<h2 class="heading02">Test add new block</h2>' +
+                        '</div>' +
+                        '<div id="ec_trans_list_box__list_box" class="table_list">' +
+                            '<div id="ec_trans_list_box__list" class="table-responsive with-border">' +
+                                '<table class="table table-striped">' +
+                                    '<thead>' +
+                                        '<tr id="ec_trans_list__list_header">' +
+                                            '<th id="ec_trans_list__header_id">分量/回数</th>' +
+                                            '<th id="ec_trans_list__header_name">商品名</th>' +
+                                            '<th id="ec_trans_list__header_quantity">数量</th>' +
+                                            '<th id="ec_trans_list__header_sum">合計</th>' +
+                                        '</tr>' +
+                                    '</thead>' +
+                                    '<tbody>' +
+                                    {% for i in 1..10 %}
+                                        '<tr id="ec_trans_list__item--{{ i }}">' +
+                                            '<td id="ec_trans_list__id--{{ i }}"> {{ i }}' +
+                                            '</td>' +
+                                            '<td id="ec_trans_list__name--{{ i }}"> abc test: {{ i }}' +
+                                            '</td>' +
+                                            '<td id="ec_trans_list__quantity--{{ i }}"> abc test: {{ i }}' +
+                                            '</td>' +
+                                            '<td id="ec_trans_list__sum--{{ i }}"> abc test: {{ i }}' +
+                                            '</td>' +
+                                        '</tr>' +
+                                    {% endfor %}
+                                    '</tbody>' +
+                                '</table>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
+        );
+    })
+</script>

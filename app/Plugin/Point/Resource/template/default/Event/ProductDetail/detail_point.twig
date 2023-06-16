@@ -1,0 +1,9 @@
+<p id="detail_description_box__sale_point" class="text-primary">
+    {% if point.min != point.max %}
+        加算ポイント：<span>{{ point.min|number_format }}</span><span class="small">pt</span> ～
+        <span>{{ point.max|number_format }}</span><span class="small">pt</span>
+    {% else %}
+        加算ポイント：<span>{{ point.max|number_format }}</span><span class="small">pt</span>
+    {% endif %}
+</p>
+

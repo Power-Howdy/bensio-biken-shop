@@ -1,0 +1,32 @@
+Plugin\Point\Entity\PointStatus:
+    type: entity
+    table: plg_point_status
+    repositoryClass: Plugin\Point\Repository\PointStatusRepository
+    id:
+        point_status_id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        order_id:
+            type: integer
+            nullable: false
+            unsigned: false
+        customer_id:
+            type: integer
+            nullable: false
+            unsigned: false
+        status:
+            type: smallint
+            options:
+                default: 0
+        del_flg:
+            type: smallint
+            options:
+                default: 0
+        point_fix_date:
+            type: datetime
+            nullable: true
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

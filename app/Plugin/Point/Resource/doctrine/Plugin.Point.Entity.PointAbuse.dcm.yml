@@ -1,0 +1,17 @@
+Plugin\Point\Entity\PointAbuse:
+    type: entity
+    table: plg_point_abuse
+    repositoryClass: Plugin\Point\Repository\PointAbuseRepository
+    id:
+        point_abuse_id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        order_id:
+            type: integer
+            nullable: false
+            unsigned: false
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

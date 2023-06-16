@@ -1,0 +1,19 @@
+Plugin\EccubePaymentLite3\Entity\Master\RegularStatus:
+    type: entity
+    table: plg_paylite_regular_status
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\Master\RegularStatusRepository
+    id:
+        id:
+            type: smallint
+            nullable: false
+            unsigned: false
+            id: true
+    fields:
+        name:
+            type: text
+            nullable: true
+        rank:
+            type: smallint
+            nullable: false
+            unsigned: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,8 @@
+name: ギャラリーブロックプラグイン
+version: 1.1
+event: Shiro8GallaryBlock3Event
+service:
+    - Shiro8GallaryBlock3ServiceProvider
+code: Shiro8GallaryBlock3
+orm.path:
+    - /Resource/doctrine

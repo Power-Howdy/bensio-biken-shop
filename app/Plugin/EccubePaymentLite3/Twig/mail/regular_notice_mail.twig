@@ -1,0 +1,88 @@
+{% autoescape false %}
+    {{ RegularOrder.name01 }} {{ RegularOrder.name02 }} 様
+
+    こちらは定期購入内容の事前お知らせメールとなります。
+    下記ご注文内容にお間違えがないかご確認下さい。
+
+    ************************************************
+    　ご請求金額
+    ************************************************
+
+    お支払い合計：{{ RegularOrder.payment_total|price}}
+    お支払い方法：{{ RegularOrder.payment_method }}
+
+
+    ************************************************
+    　ご注文商品明細
+    ************************************************
+
+    {% for RegularOrderItem in RegularOrder.MergedRegularProductOrderItems %}
+        商品コード：{{ RegularOrderItem.product_code }}
+        商品名：{{ RegularOrderItem.product_name }}  {{ RegularOrderItem.classcategory_name1 }}  {{ RegularOrderItem.classcategory_name2 }}
+        小計：{{ RegularOrderItem.total_price|price }}
+        数量：{{ RegularOrderItem.quantity|number_format }}
+
+    {% endfor %}
+
+    -------------------------------------------------
+    小　計：{{ RegularOrder.subtotal|price }}
+
+    手数料：{{ RegularOrder.charge|price }}
+    送　料：{{ RegularOrder.delivery_fee_total|price}}
+    {% if RegularOrder.discount > 0 %}
+        値引き：{{ (0 - RegularOrder.discount)|price}}
+    {% endif %}
+    ============================================
+    合　計：{{ RegularOrder.payment_total|price }}
+
+    ************************************************
+    　ご注文者情報
+    ************************************************
+    お名前：{{ RegularOrder.name01 }} {{ RegularOrder.name02 }} 様
+    お名前(カナ)：{{ RegularOrder.kana01 }} {{ RegularOrder.kana02 }} 様
+    {% if RegularOrder.company_name %}
+        会社名：{{ RegularOrder.company_name }}
+    {% endif %}
+    郵便番号：〒{{ RegularOrder.postal_code }}
+    住所：{{ RegularOrder.Pref.name }}{{ RegularOrder.addr01 }}{{ RegularOrder.addr02 }}
+    電話番号：{{ RegularOrder.phone_number }}
+    メールアドレス：{{ RegularOrder.email }}
+
+    ************************************************
+    　配送情報
+    ************************************************
+
+    {%  for RegularShipping in RegularOrder.RegularShippings %}
+        ◎お届け先{% if RegularOrder.multiple %}{{ loop.index }}{% endif %}
+
+        お名前：{{ RegularShipping.name01 }} {{ RegularShipping.name02 }} 様
+        お名前(カナ)：{{ RegularShipping.kana01 }} {{ RegularShipping.kana02 }} 様
+        {% if RegularShipping.company_name %}
+            会社名：{{ RegularShipping.company_name }}
+        {% endif %}
+        郵便番号：〒{{ RegularShipping.postal_code }}
+        住所：{{ RegularShipping.Pref.name }}{{ RegularShipping.addr01 }}{{ RegularShipping.addr02 }}
+        電話番号：{{ RegularShipping.phone_number }}
+
+        配送方法：{{ RegularShipping.shipping_delivery_name }}
+        お届け日：{{ RegularShipping.shipping_delivery_date is empty ? '指定なし' : RegularShipping.shipping_delivery_date|localizeddate('medium', 'short', 'Japanese', null, 'YYYY/MM/dd') }}
+        お届け時間：{{ RegularShipping.shipping_delivery_time|default('指定なし') }}
+
+        {%  for RegularOrderItem in RegularShipping.RegularProductOrderItems %}
+            商品コード：{{ RegularOrderItem.product_code }}
+            商品名：{{ RegularOrderItem.product_name }}  {{ RegularOrderItem.classcategory_name1 }}  {{ RegularOrderItem.classcategory_name2 }}
+            数量：{{ RegularOrderItem.quantity|number_format }}
+
+        {% endfor %}
+    {% endfor %}
+
+    {% if RegularOrder.complete_mail_message is not empty %}
+        {{ RegularOrder.complete_mail_message }}
+    {% endif %}
+
+    ============================================
+
+    このメッセージはお客様へのお知らせ専用ですので、
+    このメッセージへの返信としてご質問をお送りいただいても回答できません。
+    ご了承ください。
+{% endautoescape %}

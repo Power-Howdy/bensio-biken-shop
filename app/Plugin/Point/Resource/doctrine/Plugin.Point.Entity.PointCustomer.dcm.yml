@@ -1,0 +1,35 @@
+Plugin\Point\Entity\PointCustomer:
+    type: entity
+    table: plg_point_customer
+    repositoryClass: Plugin\Point\Repository\PointCustomerRepository
+    id:
+        plg_point_customer_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        plg_point_current:
+            type: integer
+            nullable: false
+            unsigned: false
+        customer_id:
+            type: integer
+            nullable: false
+            unsigned: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    manyToOne:
+        Customer:
+            targetEntity: Eccube\Entity\Customer
+            joinColumn:
+                name: customer_id
+                referencedColumnName: customer_id
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

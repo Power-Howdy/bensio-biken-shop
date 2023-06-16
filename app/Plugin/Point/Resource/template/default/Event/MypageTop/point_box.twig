@@ -1,0 +1,6 @@
+<p class="txt_center">
+    現在の保有ポイントは「<span class="text-primary">{{ point.current >= 0 ? point.current|number_format  : 0 }} pt</span>」です。<br/>
+    {% if app.debug %}現在の仮ポイントは「<span class="text-primary">{{ point.pre|number_format }} pt</span>」です。<br/>{% endif %}
+    ※1pt＝<span class="text-primary">{{ point.rate|price }}</span>でご利用いただけます。
+</p>
+

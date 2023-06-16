@@ -1,0 +1,111 @@
+{#
+ This file is part of EC-CUBE
+
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ https://www.ec-cube.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['mailmagazine', 'mailmagazine_history'] %}
+
+{% block title %}メルマガ管理{% endblock %}
+{% block sub_title %}配信結果{% endblock %}
+
+{% block javascript %}
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
+{% endblock %}
+
+{% block main %}
+
+    <div class="box">
+        {% if pagination and pagination.totalItemCount > 0 %}
+            <div class="box-header with-arrow">
+                <h3 class="box-title">総件数 <span class="normal"><strong>{{ pagination.totalItemCount }} 件</strong> </span></h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="sort-dd">
+                            <li class="dropdown">
+                                {% for pageMax in pageMaxis if pageMax.name == page_count %}
+                                <a class="dropdown-toggle" data-toggle="dropdown">{{ pageMax.name|e }}件<svg class="cb cb-angle-down icon_down"><use xlink:href="#cb-angle-down"></svg></a>
+                                <ul class="dropdown-menu">
+                                    {% endfor %}
+                                    {% for pageMax in pageMaxis if pageMax.name != page_count %}
+                                        <li><a href="{{ path('plugin_mail_magazine_history_result', {'id': historyId, 'page_no': 1, 'page_count': pageMax.name}) }}">{{ pageMax.name|e }}件</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="table_list">
+                    <div class="table-responsive with-border">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ステータス</th>
+                                <th>会員ID</th>
+                                <th>送信先</th>
+                                <th>名前</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for result in pagination %}
+                                <tr>
+                                    <td>
+                                        {% if result.status == '0' %}
+                                            <span class="label">未送信</span>
+                                        {% elseif result.status == '1' %}
+                                            <span class="label label-success">送信済み</span>
+                                        {% elseif result.status == '2' %}
+                                            <span class="label label-danger">送信失敗</span>
+                                        {% else %}
+                                            {{ result.status }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ result.customerId }}</td>
+                                    <td>{{ result.email }}</td>
+                                    <td>{{ result.name }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="pagination_wrap" class="box-footer">
+                <div class="text-center">
+                    <ul class="pagination">
+                        {% if pagination.paginationData.previous is defined %}
+                            <li class="pagenation__item-previous"><a href="{{ path('plugin_mail_magazine_history_result', { 'id': historyId, 'page_count': page_count }|merge({'page_no': pagination.paginationData.previous})) }}" aria-label="Previous"><span aria-hidden="true">前へ</span></a></li>
+                        {% endif %}
+
+                        {% for page in pagination.paginationData.pagesInRange %}
+                            <li{% if page == pagination.paginationData.current %} class="pagenation__item active"{% endif %}><a href="{{ path('plugin_mail_magazine_history_result', { 'id': historyId, 'page_count': page_count }|merge({'page_no': page})) }}"><span>{{ page }}</span></a></li>
+                        {% endfor %}
+
+                        {% if pagination.paginationData.next is defined %}
+                            <li class="pagenation__item-next"><a href="{{ path('plugin_mail_magazine_history_result', { 'id': historyId, 'page_count': page_count }|merge({'page_no': pagination.paginationData.next})) }}" aria-label="Next"><span aria-hidden="true">次へ</span></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <div class="box-header with-arrow">
+                <h3 class="box-title">該当するデータがありませんでした。</h3>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+            <p><a href="{{ url('plugin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
+        </div>
+    </div>
+{% endblock %}

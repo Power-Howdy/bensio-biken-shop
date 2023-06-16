@@ -1,0 +1,17 @@
+<div class="modal fade" id="completePaymentBtn" tabindex="-1" role="dialog" aria-labelledby="completePaymentBtn" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">決済完了確認</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div id="">注文番号: {{ Order.id }}の受注情報を、支払方法「登録済みのクレジットカードで決済」でイプシロン決済サービスに登録します。</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" id="register_gmo_epsilon_credit_card_btn" class="btn btn-primary" >登録する</button>
+            </div>
+        </div>
+    </div>
+</div>

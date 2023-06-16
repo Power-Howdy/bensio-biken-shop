@@ -1,0 +1,4 @@
+admin.point.save.complete: ポイント基本情報を保存しました。
+admin.point.save.error: ポイント基本情報の保存に失敗しました。
+admin.point.display.usepoint.error: ポイントが不正です。
+admin.point.validate.zero.error: 0は設定できません。

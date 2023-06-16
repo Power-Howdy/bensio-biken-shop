@@ -1,0 +1,651 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+
+http://www.lockon.co.jp/
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#}
+{% extends 'default_frame.twig' %}
+
+{% block stylesheet %}
+<style type="text/css">
+.video_product_name {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    border-bottom: 1px dotted #ccc;
+    padding: 8px;
+}
+.video_area .video_comment {
+	padding:10px;
+	margin-bottom:20px;
+	background-color:#f5f5f5;
+}
+.video_area .video_file {
+	margin-bottom:20px;
+}
+.video_item_area {
+	margin-bottom:30px;
+}
+.video_item_area .embed-container {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 30px;
+	height: 0;
+	overflow: hidden;
+	width: 100%;
+	margin-bottom:10px;
+}
+.video_item_area .embed-container iframe,
+.video_item_area .embed-container object,
+.video_item_area .embed-container embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.video_item_area .video_title {
+	font-size: 20px;
+	font-size: 2.0rem;
+	padding:10px;
+	color:#fff;
+	background-color:#000;
+	margin-bottom:10px;
+}
+.video_item_area .hosoku {
+	display:none;
+	padding:10px;
+	margin:10px 0 20px 0;
+	background-color:#f5f5f5;
+}
+@media only screen and (min-width: 768px) {
+.video_product_name {
+        font-size: 32px;
+        font-size: 3.2rem;
+        border-bottom-style: solid;
+        padding: 16px 0 12px;
+        margin: 16px 8px;
+}
+}
+</style>
+{% endblock %}
+
+{% set mypageno = 'video' %}
+
+{% set body_class = 'mypage' %}
+
+{% block javascript %}
+<script>
+    $(function(){
+		$('#toggle1').on('click', function() {
+			$('#text1').toggle('fast');
+		});
+		$('#toggle2').on('click', function() {
+			$('#text2').toggle('fast');
+		});
+		$('#toggle3').on('click', function() {
+			$('#text3').toggle('fast');
+		});
+		$('#toggle4').on('click', function() {
+			$('#text4').toggle('fast');
+		});
+		$('#toggle5').on('click', function() {
+			$('#text5').toggle('fast');
+		});
+		$('#toggle6').on('click', function() {
+			$('#text6').toggle('fast');
+		});
+		$('#toggle7').on('click', function() {
+			$('#text7').toggle('fast');
+		});
+		$('#toggle8').on('click', function() {
+			$('#text8').toggle('fast');
+		});
+		$('#toggle9').on('click', function() {
+			$('#text1').toggle('fast');
+		});
+		$('#toggle10').on('click', function() {
+			$('#text10').toggle('fast');
+		});
+		$('#toggle11').on('click', function() {
+			$('#text11').toggle('fast');
+		});
+		$('#toggle12').on('click', function() {
+			$('#text12').toggle('fast');
+		});
+		$('#toggle13').on('click', function() {
+			$('#text13').toggle('fast');
+		});
+		$('#toggle14').on('click', function() {
+			$('#text14').toggle('fast');
+		});
+		$('#toggle15').on('click', function() {
+			$('#text15').toggle('fast');
+		});
+		$('#toggle16').on('click', function() {
+			$('#text16').toggle('fast');
+		});
+		$('#toggle17').on('click', function() {
+			$('#text17').toggle('fast');
+		});
+		$('#toggle18').on('click', function() {
+			$('#text18').toggle('fast');
+		});
+		$('#toggle19').on('click', function() {
+			$('#text19').toggle('fast');
+		});
+		$('#toggle20').on('click', function() {
+			$('#text20').toggle('fast');
+		});
+    });
+</script>
+{% endblock %}
+{% block main %}
+{% if Order.CustomerOrderStatus == "入金済み" %}
+
+    <h1 class="page-heading">教材をみる</h1>
+    <div id="detail_wrap" class="container-fluid">
+
+        {% include 'Mypage/navi.twig' %}
+
+        <div id="shopping_confirm" class="row">
+            <div id="confirm_main" class="col-sm-12">
+                <div id="detail_list_box__body" class="cart_item">
+					
+					<div class="item_box">
+						<div class="video_area">
+							{% for Product in Products %}
+								{% if item_id == Product.id %}
+								
+									<div class="video_product_name">
+									{{ Product.name }}
+									</div>
+									
+									{% if Product.video_comment is not empty %}
+										<div class="video_comment">
+											{{ Product.video_comment|raw|nl2br }}
+										</div>
+									{% endif %}
+									
+									{% if Product.video_file is not empty %}
+										<div class="video_file">
+											<a class="btn btn-success" href="{{ app.config.user_data_urlpath }}/videotext/{{ Product.video_file }}" target="_blank">テキストファイル</a>
+											{% if Product.video_userid is not empty and Product.video_userpass is not empty %}
+												&nbsp;&nbsp;ID&nbsp;<span class="text-danger">{{ Product.video_userid }}</span>&nbsp;&nbsp;&nbsp;PASSWORD&nbsp;<span class="text-danger">{{ Product.video_userpass }}</span>&nbsp;（認証画面で入力してください）
+											{% endif %}
+										</div>
+									{% endif %}
+
+									{# ▼1 #}
+									<div class="video_item_area">
+										{% if Product.video_title1 is not empty %}
+										<div class="video_title title{{ Product.video_url1 }}">
+											{{ Product.video_title1 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url1 is not empty %}
+										<div class="embed-container url{{ Product.video_url1 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url1 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text1 is not empty %}
+										<div class="video_text text{{ Product.video_url1 }}">
+											<a id="toggle1" class="btn btn-danger">補足・コメント</a>
+											<div id="text1" class="hosoku">
+												{{ Product.video_text1|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼2 #}
+									<div class="video_item_area">
+										{% if Product.video_title2 is not empty %}
+										<div class="video_title title{{ Product.video_url2 }}">
+											{{ Product.video_title2 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url2 is not empty %}
+										<div class="embed-container url{{ Product.video_url2 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url2 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text2 is not empty %}
+										<div class="video_text text{{ Product.video_url2 }}">
+											<a id="toggle2" class="btn btn-danger">補足・コメント</a>
+											<div id="text2" class="hosoku">
+												{{ Product.video_text2|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+
+									{# ▼3 #}
+									<div class="video_item_area">
+										{% if Product.video_title3 is not empty %}
+										<div class="video_title title{{ Product.video_url3 }}">
+											{{ Product.video_title3 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url3 is not empty %}
+										<div class="embed-container url{{ Product.video_url3 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url3 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text3 is not empty %}
+										<div class="video_text text{{ Product.video_url3 }}">
+											<a id="toggle3" class="btn btn-danger">補足・コメント</a>
+											<div id="text3" class="hosoku">
+												{{ Product.video_text3|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼4 #}
+									<div class="video_item_area">
+										{% if Product.video_title4 is not empty %}
+										<div class="video_title title{{ Product.video_url4 }}">
+											{{ Product.video_title4 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url4 is not empty %}
+										<div class="embed-container url{{ Product.video_url4 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url4 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text4 is not empty %}
+										<div class="video_text text{{ Product.video_url4 }}">
+											<a id="toggle4" class="btn btn-danger">補足・コメント</a>
+											<div id="text4" class="hosoku">
+												{{ Product.video_text4|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼5 #}
+									<div class="video_item_area">
+										{% if Product.video_title5 is not empty %}
+										<div class="video_title title{{ Product.video_url5 }}">
+											{{ Product.video_title5 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url5 is not empty %}
+										<div class="embed-container url{{ Product.video_url5 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url5 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text5 is not empty %}
+										<div class="video_text text{{ Product.video_url5 }}">
+											<a id="toggle5" class="btn btn-danger">補足・コメント</a>
+											<div id="text5" class="hosoku">
+												{{ Product.video_text5|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼6 #}
+									<div class="video_item_area">
+										{% if Product.video_title6 is not empty %}
+										<div class="video_title title{{ Product.video_url6 }}">
+											{{ Product.video_title6 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url6 is not empty %}
+										<div class="embed-container url{{ Product.video_url6 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url6 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text6 is not empty %}
+										<div class="video_text text{{ Product.video_url6 }}">
+											<a id="toggle6" class="btn btn-danger">補足・コメント</a>
+											<div id="text6" class="hosoku">
+												{{ Product.video_text6|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼7 #}
+									<div class="video_item_area">
+										{% if Product.video_title7 is not empty %}
+										<div class="video_title title{{ Product.video_url7 }}">
+											{{ Product.video_title7 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url7 is not empty %}
+										<div class="embed-container url{{ Product.video_url7 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url7 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text7 is not empty %}
+										<div class="video_text text{{ Product.video_url7 }}">
+											<a id="toggle7" class="btn btn-danger">補足・コメント</a>
+											<div id="text7" class="hosoku">
+												{{ Product.video_text7|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼8 #}
+									<div class="video_item_area">
+										{% if Product.video_title8 is not empty %}
+										<div class="video_title title{{ Product.video_url8 }}">
+											{{ Product.video_title8 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url8 is not empty %}
+										<div class="embed-container url{{ Product.video_url8 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url8 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text8 is not empty %}
+										<div class="video_text text{{ Product.video_url8 }}">
+											<a id="toggle8" class="btn btn-danger">補足・コメント</a>
+											<div id="text8" class="hosoku">
+												{{ Product.video_text8|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼9 #}
+									<div class="video_item_area">
+										{% if Product.video_title9 is not empty %}
+										<div class="video_title title{{ Product.video_url9 }}">
+											{{ Product.video_title9 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url9 is not empty %}
+										<div class="embed-container url{{ Product.video_url9 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url9 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text9 is not empty %}
+										<div class="video_text text{{ Product.video_url9 }}">
+											<a id="toggle9" class="btn btn-danger">補足・コメント</a>
+											<div id="text9" class="hosoku">
+												{{ Product.video_text9|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼10 #}
+									<div class="video_item_area">
+										{% if Product.video_title10 is not empty %}
+										<div class="video_title title{{ Product.video_url10 }}">
+											{{ Product.video_title10 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url10 is not empty %}
+										<div class="embed-container url{{ Product.video_url10 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url10 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text10 is not empty %}
+										<div class="video_text text{{ Product.video_url10 }}">
+											<a id="toggle10" class="btn btn-danger">補足・コメント</a>
+											<div id="text10" class="hosoku">
+												{{ Product.video_text10|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼11 #}
+									<div class="video_item_area">
+										{% if Product.video_title11 is not empty %}
+										<div class="video_title title{{ Product.video_url11 }}">
+											{{ Product.video_title11 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url11 is not empty %}
+										<div class="embed-container url{{ Product.video_url11 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url11 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text11 is not empty %}
+										<div class="video_text text{{ Product.video_url11 }}">
+											<a id="toggle11" class="btn btn-danger">補足・コメント</a>
+											<div id="text11" class="hosoku">
+												{{ Product.video_text11|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼12 #}
+									<div class="video_item_area">
+										{% if Product.video_title12 is not empty %}
+										<div class="video_title title{{ Product.video_url12 }}">
+											{{ Product.video_title12 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url12 is not empty %}
+										<div class="embed-container url{{ Product.video_url12 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url12 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text12 is not empty %}
+										<div class="video_text text{{ Product.video_url12 }}">
+											<a id="toggle12" class="btn btn-danger">補足・コメント</a>
+											<div id="text12" class="hosoku">
+												{{ Product.video_text12|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼13 #}
+									<div class="video_item_area">
+										{% if Product.video_title13 is not empty %}
+										<div class="video_title title{{ Product.video_url13 }}">
+											{{ Product.video_title13 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url13 is not empty %}
+										<div class="embed-container url{{ Product.video_url13 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url13 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text13 is not empty %}
+										<div class="video_text text{{ Product.video_url13 }}">
+											<a id="toggle13" class="btn btn-danger">補足・コメント</a>
+											<div id="text13" class="hosoku">
+												{{ Product.video_text13|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼14 #}
+									<div class="video_item_area">
+										{% if Product.video_title14 is not empty %}
+										<div class="video_title title{{ Product.video_url14 }}">
+											{{ Product.video_title14 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url14 is not empty %}
+										<div class="embed-container url{{ Product.video_url14 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url14 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text14 is not empty %}
+										<div class="video_text text{{ Product.video_url14 }}">
+											<a id="toggle14" class="btn btn-danger">補足・コメント</a>
+											<div id="text14" class="hosoku">
+												{{ Product.video_text14|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼15 #}
+									<div class="video_item_area">
+										{% if Product.video_title15 is not empty %}
+										<div class="video_title title{{ Product.video_url15 }}">
+											{{ Product.video_title15 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url15 is not empty %}
+										<div class="embed-container url{{ Product.video_url15 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url15 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text15 is not empty %}
+										<div class="video_text text{{ Product.video_url15 }}">
+											<a id="toggle15" class="btn btn-danger">補足・コメント</a>
+											<div id="text15" class="hosoku">
+												{{ Product.video_text15|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼16 #}
+									<div class="video_item_area">
+										{% if Product.video_title16 is not empty %}
+										<div class="video_title title{{ Product.video_url16 }}">
+											{{ Product.video_title16 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url16 is not empty %}
+										<div class="embed-container url{{ Product.video_url16 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url16 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text16 is not empty %}
+										<div class="video_text text{{ Product.video_url16 }}">
+											<a id="toggle16" class="btn btn-danger">補足・コメント</a>
+											<div id="text16" class="hosoku">
+												{{ Product.video_text16|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼17 #}
+									<div class="video_item_area">
+										{% if Product.video_title17 is not empty %}
+										<div class="video_title title{{ Product.video_url17 }}">
+											{{ Product.video_title17 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url17 is not empty %}
+										<div class="embed-container url{{ Product.video_url17 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url17 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text17 is not empty %}
+										<div class="video_text text{{ Product.video_url17 }}">
+											<a id="toggle17" class="btn btn-danger">補足・コメント</a>
+											<div id="text17" class="hosoku">
+												{{ Product.video_text17|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼18 #}
+									<div class="video_item_area">
+										{% if Product.video_title18 is not empty %}
+										<div class="video_title title{{ Product.video_url18 }}">
+											{{ Product.video_title18 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url18 is not empty %}
+										<div class="embed-container url{{ Product.video_url18 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url18 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text18 is not empty %}
+										<div class="video_text text{{ Product.video_url18 }}">
+											<a id="toggle18" class="btn btn-danger">補足・コメント</a>
+											<div id="text18" class="hosoku">
+												{{ Product.video_text18|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼19 #}
+									<div class="video_item_area">
+										{% if Product.video_title19 is not empty %}
+										<div class="video_title title{{ Product.video_url19 }}">
+											{{ Product.video_title19 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url19 is not empty %}
+										<div class="embed-container url{{ Product.video_url19 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url19 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text19 is not empty %}
+										<div class="video_text text{{ Product.video_url19 }}">
+											<a id="toggle19" class="btn btn-danger">補足・コメント</a>
+											<div id="text19" class="hosoku">
+												{{ Product.video_text19|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+									{# ▼20 #}
+									<div class="video_item_area">
+										{% if Product.video_title20 is not empty %}
+										<div class="video_title title{{ Product.video_url20 }}">
+											{{ Product.video_title20 }}
+										</div>
+										{% endif %}
+										{% if Product.video_url20 is not empty %}
+										<div class="embed-container url{{ Product.video_url20 }}">
+											<iframe src="//player.vimeo.com/video/{{ Product.video_url20 }}?title=0&byline=0&portrait=0&badge=0" width="785" height="442" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+										</div>
+										{% endif %}
+										{% if Product.video_text20 is not empty %}
+										<div class="video_text text{{ Product.video_url20 }}">
+											<a id="toggle20" class="btn btn-danger">補足・コメント</a>
+											<div id="text20" class="hosoku">
+												{{ Product.video_text20|raw|nl2br }}
+											</div>
+										</div>
+										{% endif %}
+									</div>
+									
+								{% endif %}
+							{% endfor %}
+						</div>
+					</div>
+					
+                </div><!--/cart_item-->
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+
+        <div id="detail_box__top_button" class="row">
+            <div class="col-sm-12 txt_center">
+                <a href="{{ url('mypage') }}" class="btn btn-default">ご注文履歴に戻る</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

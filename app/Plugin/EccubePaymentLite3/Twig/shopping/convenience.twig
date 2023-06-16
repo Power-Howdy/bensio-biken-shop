@@ -1,0 +1,60 @@
+
+{% extends  'default_frame.twig' %}
+
+{% block javascript %}
+
+{% endblock %}
+
+{% block main %}
+
+    <h2 class="title">{{ title }}</h2>
+    <form name="form1" id="form1" method="post" action="?" >
+        {{ form_widget(form._token) }}
+        <div class="dl_table" id="payment_form_body">
+            <dl>
+                <dt>コンビニ選択<span class="required">必須</span></dt>
+                <dd>
+                    <div class="form-group form-inline {% if form.convenience.vars.errors is not empty %}has-error{% endif %}">
+                        {{ form_widget(form.convenience) }}
+                        {{ form_errors(form.convenience) }}
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt>利用者名(カナ)<span class="required">必須</span></dt>
+                <dd>
+                    <div class="form-group form-inline {% if form.kana01.vars.errors is not empty or form.kana02.vars.errors is not empty %}has-error{% endif %}">
+                        セイ：{{ form_widget(form.kana01) }}  &nbsp;メイ：{{ form_widget(form.kana02) }}
+                        {{ form_errors(form.kana01) }}
+                        {{ form_errors(form.kana02) }}
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt>電話番号<span class="required">必須</span></dt>
+                <dd>
+                    <div class="form-group form-inline {% if form.tel01.vars.errors is not empty or form.tel02.vars.errors is not empty or form.tel03.vars.errors is not empty %}has-error{% endif %}">
+                        {{ form_widget(form.tel01) }}  &nbsp; - &nbsp; {{ form_widget(form.tel02) }} &nbsp; - &nbsp; {{ form_widget(form.tel03)}}
+                        {{ form_errors(form.tel01) }}
+                        {{ form_errors(form.tel02) }}
+                        {{ form_errors(form.tel03) }}
+                    </div>
+                </dd>
+            </dl>
+
+        </div>
+
+        <p>以上の内容で間違いなければ、下記「ご注文完了ページへ」ボタンをクリックしてください。</p>
+        <p>※ 画面が切り替わるまで少々時間がかかる場合がございますが、そのままお待ちください。</p>
+
+        <div class="row no-padding">
+            <div class="btn_group col-sm-offset-4 col-sm-4">
+                <p>
+                    <input type="submit" class="btn btn-primary btn-block" value="ご注文完了ページへ" />
+                </p>
+                <p><a href="{{ path('paylite_shopping_payment_back') }}?order_number={{ order_number }}" class="btn btn-info btn-block">戻る</a></p>
+            </div>
+        </div>
+
+    </form>
+{% endblock %}

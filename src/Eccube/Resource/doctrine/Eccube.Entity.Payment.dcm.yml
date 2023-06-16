@@ -1,0 +1,76 @@
+Eccube\Entity\Payment:
+    type: entity
+    table: dtb_payment
+    repositoryClass: Eccube\Repository\PaymentRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: payment_id
+            generator:
+                strategy: AUTO
+    fields:
+        method:
+            type: text
+            nullable: true
+            column: payment_method
+        charge:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        rule_max:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+        rank:
+            type: integer
+            nullable: true
+            unsigned: false
+        fix_flg:
+            type: smallint
+            nullable: true
+            unsigned: false
+            options:
+                default: '1'
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            options:
+                default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+        payment_image:
+            type: text
+            nullable: true
+        charge_flg:
+            type: smallint
+            nullable: true
+            unsigned: false
+            options:
+                default: '1'
+        rule_min:
+            type: decimal
+            nullable: true
+            precision: 10
+            scale: 0
+    manyToOne:
+        Creator:
+            targetEntity: Eccube\Entity\Member
+            joinColumn:
+                name: creator_id
+                referencedColumnName: member_id
+                nullable: false
+    oneToMany:
+        PaymentOptions:
+            targetEntity: Eccube\Entity\PaymentOption
+            mappedBy: Payment
+    lifecycleCallbacks: {  }

@@ -1,0 +1,18 @@
+{% autoescape false %}
+    {{ now|date_min }}の受注作成バッチ実行結果は以下の通りです。
+
+    受注作成処理件数：{{ numberOfRegularOrders }}
+    受注作成処理完了件数：{{ numberOfCompletedOrder }}
+    決済エラー数：{{ numberOfPaymentError }}
+    システムエラー数：{{ numberOfSystemError }}
+
+    【決済エラー詳細】
+    決済エラーとなった定期は定期受注管理画面からカード変更依頼メール一括通知を実施してください。
+    {% for RegularOrder in PaymentErrorRegularOrders %}
+    定期受注ID：{{ RegularOrder.id }}
+    ご注文者氏名：{{ RegularOrder.name01 }} {{ RegularOrder.name02 }}
+    メールアドレス：{{ RegularOrder.email }}
+{#    エラー内容：エラーコード: A081010401 受付番号の設定がありません。#}
+    {% endfor %}
+
+{% endautoescape %}

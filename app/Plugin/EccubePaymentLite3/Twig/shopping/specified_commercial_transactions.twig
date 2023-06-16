@@ -1,0 +1,159 @@
+<script>
+    $(function (){
+        $('#shipping_confirm_box--0').after(
+            '<div id="ec_trans_quantity_wrap" class="row">' +
+                '<div id="ec_trans_quantity_list_box" class="col-md-12">' +
+                    '<div id="ec_trans_quantity_list_box__body" class="box">' +
+                        '<div id="ec_trans_quantity_list_box__header" class="box-header">' +
+                            '<h2 class="heading02">各回 購入個数について</h2>' +
+                        '</div>' +
+
+                        {% for descriptionQuantity in arrRegularDescriptionQuantity %}
+                            {% if descriptionQuantity['free_description_quantity']|trim is not empty %}
+                                {% set free_description_quantity = descriptionQuantity['free_description_quantity'] |replace({ '\r\n': '<br>', '\n': '<br>', '\r': '<br>' })|escape('js') %}
+                                '<div>{{ descriptionQuantity['product_name'] }}：{{ free_description_quantity }} </div>' +
+                            {% endif %}
+                        {% endfor %}
+
+                        '<div id="ec_trans_quantity_list_box__list_box" class="table_list">' +
+                            '<div id="ec_trans_quantity_list_box__list" class="table-responsive with-border">' +
+                                '<table class="table table-bordered table-striped" style="width: 100%;">' +
+                                    '<thead>' +
+                                        '<tr id="ec_trans_quantity_list__list_header">' +
+                                            '<th id="ec_trans_quantity_list__header_id">分量/回数</th>' +
+                                            '<th id="ec_trans_quantity_list__header_name">商品名</th>' +
+                                            '<th id="ec_trans_quantity_list__header_quantity">数量</th>' +
+                                            '<th id="ec_trans_quantity_list__header_subtotal">合計</th>' +
+                                        '</tr>' +
+                                    '</thead>' +
+                                    '<tbody>' +
+                                    {% for i in 1..limitCycle %}
+                                        {% set countItem = Order.orderDetails|length %}
+                                        {% for orderDetail in Order.orderDetails %}
+                                            '<tr id="ec_trans_quantity_list__item--{{ loop.parent.loop.index }}-{{ loop.index }}">' +
+                                                {% if countItem >= 1 %}
+                                                '<td id="ec_trans_quantity_list__id--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_center" style="vertical-align:middle;" rowspan="{{ countItem }}"> {{ loop.parent.loop.index }}' +
+                                                '</td>' +
+                                                {% endif %}
+                                                '<td id="ec_trans_quantity_list__name--{{ loop.parent.loop.index }}-{{ loop.index }}" style="vertical-align:middle;"> <div>{{ orderDetail.productName }}</div>' +
+                                                    {% if orderDetail.productClass.classCategory1 %}
+                                                    '<div>{{ orderDetail.productClass.classCategory1.className }}：{{ orderDetail.productClass.classCategory1 }}</div>' +
+                                                    {% endif %}
+                                                    {% if orderDetail.productClass.classCategory2 %}
+                                                    '<div>{{ orderDetail.productClass.classCategory2.className }}：{{ orderDetail.productClass.classCategory2 }}</div>' +
+                                                    {% endif %}
+                                                '</td>' +
+
+                                                '<td id="ec_trans_quantity_list__quantity--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_center" style="vertical-align:middle;"> {{ orderDetail.quantity|number_format }}' +
+                                                '</td>' +
+
+                                                {% if countItem >= 1 %}
+                                                    '<td id="ec_trans_quantity_list__subtotal--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_center" style="vertical-align:middle;" rowspan="{{ countItem }}"> {{ totalQuantity|number_format }}' +
+                                                    '</td>' +
+                                                {% endif %}
+                                                {% set countItem = 0 %}
+                                            '</tr>' +
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                        {% set sumQuantity = totalQuantity * limitCycle %}
+                                        '<tr id="ec_trans_quantity_list__total">' +
+                                            '<td id="ec_trans_quantity_list__total_name" class="txt_center" style="vertical-align:middle;" colspan="2"> {{ limitCycle }} 回分の総分量' +
+                                            '</td>' +
+                                            '<td id="ec_trans_quantity_list__total_quantity" class="txt_center" style="vertical-align:middle;"> {{ sumQuantity|number_format }}' +
+                                            '</td>' +
+                                            '<td id="ec_trans_quantity_list__total_subtotal" class="txt_center" style="vertical-align:middle;"> {{ sumQuantity|number_format }}' +
+                                            '</td>' +
+                                        '</tr>' +
+
+                                    '</tbody>' +
+                                '</table>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            // '<!-- / 各回 購入個数について -->'
+            '<div id="ec_trans_price_wrap" class="row">' +
+                '<div id="ec_trans_price_list_box" class="col-md-12">' +
+                    '<div id="ec_trans_price_list_box__body" class="box">' +
+                        '<div id="ec_trans_price_list_box__header" class="box-header">' +
+                            '<h2 class="heading02">各回 お支払い金額について</h2>' +
+                        '</div>' +
+
+                        {% for descriptionPrice in arrRegularDescriptionPrice %}
+                            {% if descriptionPrice['free_description_selling_price']|trim is not empty %}
+                                {% set free_selling_price = descriptionPrice['free_description_selling_price'] |replace({ '\r\n': '<br>', '\n': '<br>', '\r': '<br>' })|escape('js') %}
+                                '<div>{{ descriptionPrice['product_name'] }}：{{ free_selling_price }}</div>' +
+                            {% endif %}
+                        {% endfor %}
+
+                        '<div id="ec_trans_price_list_box__list_box" class="table_list">' +
+                            '<div id="ec_trans_price_list_box__list" class="table-responsive with-border">' +
+                                '<table class="table table-bordered table-striped" style="width: 100%;">' +
+                                '<thead>' +
+                                    '<tr id="ec_trans_price_list__list_header">' +
+                                        '<th id="ec_trans_price_list__header_id">分量/回数</th>' +
+                                        '<th id="ec_trans_price_list__header_name">商品名</th>' +
+                                        '<th id="ec_trans_price_list__header_price">金額</th>' +
+                                        '<th id="ec_trans_price_list__header_shipping_price">送料</th>' +
+                                        '<th id="ec_trans_price_list__header_subtotal">合計</th>' +
+                                    '</tr>' +
+                                '</thead>' +
+                                '<tbody>' +
+
+                                {% for i in 1..limitCycle %}
+                                    {% set countItem = Order.orderDetails|length %}
+                                    {% for orderDetail in Order.orderDetails %}
+                                        '<tr id="ec_trans_price_list__item--{{ loop.parent.loop.index }}-{{ loop.index }}">' +
+                                            {% if countItem >= 1 %}
+                                                '<td id="ec_trans_price_list__id--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_center" style="vertical-align:middle;" rowspan="{{ countItem }}"> {{ loop.parent.loop.index }}' +
+                                                '</td>' +
+                                            {% endif %}
+                                            '<td id="ec_trans_price_list__name--{{ loop.parent.loop.index }}-{{ loop.index }}" style="vertical-align:middle;"> <div>{{ orderDetail.productName }}</div>' +
+                                            {% if orderDetail.productClass.classCategory1 %}
+                                                '<div>{{ orderDetail.productClass.classCategory1.className }}：{{ orderDetail.productClass.classCategory1 }}</div>' +
+                                            {% endif %}
+                                            {% if orderDetail.productClass.classCategory2 %}
+                                                '<div>{{ orderDetail.productClass.classCategory2.className }}：{{ orderDetail.productClass.classCategory2 }}</div>' +
+                                            {% endif %}
+                                            '</td>' +
+
+                                            '<td id="ec_trans_price_list__quantity--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_center" style="vertical-align:middle;">{{ orderDetail.priceIncTax|price }} × {{ orderDetail.quantity|number_format }}' +
+                                            '</td>' +
+
+                                            {% if countItem >= 1 %}
+                                                '<td id="ec_trans_price_list__shipping_price--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_right" style="vertical-align:middle;" rowspan="{{ countItem }}"> {{ Order.deliveryFeeTotal|price }}' +
+                                                '</td>' +
+                                            {% endif %}
+
+                                            {% if countItem >= 1 %}
+                                                '<td id="ec_trans_price_list__subtotal--{{ loop.parent.loop.index }}-{{ loop.index }}" class="txt_right" style="vertical-align:middle;" rowspan="{{ countItem }}"> {{ Order.total|price }}' +
+                                                '</td>' +
+                                            {% endif %}
+
+                                            {% set countItem = 0 %}
+                                        '</tr>' +
+                                    {% endfor %}
+                                {% endfor %}
+                                    '<tr id="ec_trans_price_list__total">' +
+                                    '<td id="ec_trans_price_list__total_name" class="txt_center" style="vertical-align:middle;" colspan="2"> {{ limitCycle }} 回分の総分量' +
+                                    '</td>' +
+                                    '<td id="ec_trans_price_list__total_quantity" class="txt_center" style="vertical-align:middle;"> {{ (Order.subtotal * limitCycle)|price }}' +
+                                    '</td>' +
+                                    '<td id="ec_trans_price_list__total_shipping_price" class="txt_right" style="vertical-align:middle;"> {{ (Order.deliveryFeeTotal * limitCycle)|price }}' +
+                                    '</td>' +
+                                    '<td id="ec_trans_price_list__total_subtotal" class="txt_right" style="vertical-align:middle;"> {{ (Order.total * limitCycle)|price }}' +
+                                    '</td>' +
+                                    '</tr>' +
+                                '</tbody>' +
+                                '</table>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
+            // '<!-- / 各回 お支払い金額について -->'
+        );
+    })
+</script>

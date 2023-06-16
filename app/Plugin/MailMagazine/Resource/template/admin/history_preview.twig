@@ -1,0 +1,52 @@
+{#
+ This file is part of EC-CUBE
+
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ https://www.ec-cube.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['mailmagazine', 'mailmagazine_history'] %}
+
+{% block title %}メルマガ管理{% endblock %}
+{% block sub_title %}配信履歴{% endblock %}
+
+{% block javascript %}
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.core.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.widget.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js"></script>
+    <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js"></script>
+{% endblock %}
+
+{% block main %}
+
+    <div class="table_list">
+        <div class="table-responsive with-border">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th style="width: 20%;">Subject</th>
+                        <td>{{ history.subject }}</td>
+                    </tr>
+                    <tr>
+                        <th>本文 (テキスト形式)</th>
+                        <td><xmp>{{ history.body }}</xmp></td>
+                    </tr>
+                    <tr>
+                        <th>本文 (HTML形式)</th>
+                        <td><xmp>{{ history.htmlBody|raw }}</xmp></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                <p><a href="{{ url('plugin_mail_magazine_history') }}" class="btn btn-primary btn-block btn-lg">戻る</a></p>
+            </div>
+        </div>
+
+{% endblock %}

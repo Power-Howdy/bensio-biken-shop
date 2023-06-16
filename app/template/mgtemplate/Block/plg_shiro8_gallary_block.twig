@@ -1,0 +1,16 @@
+<h3>おすすめ商品</h3>
+<!-- ▼おすすめ商品▼ -->
+<p style="clear:both;"></p>
+<div class="item_gallary">
+    <ul id="osusume" class="d-f fxw-w">
+    {% if Products|length > 0 %}
+    	{% for Product in Products %}
+    		<li>
+    			<a href="{{ url('product_detail', {id : Product.id}) }}" class="item_photo">
+    				<img src="{{ app.config.image_save_urlpath }}/{{ Product.main_list_image|no_image_product }}"></a>
+    		</li>
+    	{% endfor %}
+    {% endif %}
+    </ul>
+</div>
+<!-- ▲おすすめ商品▲ -->

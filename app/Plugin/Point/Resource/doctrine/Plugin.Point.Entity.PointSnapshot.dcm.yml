@@ -1,0 +1,57 @@
+Plugin\Point\Entity\PointSnapshot:
+    type: entity
+    table: plg_point_snapshot
+    repositoryClass: Plugin\Point\Repository\PointSnapshotRepository
+    id:
+        plg_point_snapshot_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        plg_point_use:
+            type: integer
+            nullable: true
+            unsigned: false
+        plg_point_current:
+            type: integer
+            nullable: false
+            unsigned: false
+        plg_point_add:
+            type: string
+            nullable: true
+            length: 255
+        plg_point_snap_action_name:
+            type: string
+            nullable: true
+            length: 255
+        order_id:
+            type: integer
+            nullable: true
+            unsigned: false
+        customer_id:
+            type: integer
+            nullable: true
+            unsigned: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    manyToOne:
+        Order:
+            targetEntity: Eccube\Entity\Order
+            # inversedBy: Children
+            joinColumn:
+                name: order_id
+                referencedColumnName: order_id
+        Customer:
+            targetEntity: Eccube\Entity\Customer
+            joinColumn:
+                name: customer_id
+                referencedColumnName: customer_id
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

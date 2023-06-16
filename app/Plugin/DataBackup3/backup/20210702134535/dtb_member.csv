@@ -1,0 +1,4 @@
+member_id,work,authority,creator_id,name,department,login_id,password,salt,rank,del_flg,create_date,update_date,login_date
+1,1,0,1,dummy,,dummy,dummy,dummy,0,1,"2021-04-20 16:22:50","2021-04-20 16:22:50",
+2,1,0,1,管理者,"EC-CUBE SHOP",michell-design,9b6ae8278fe3124b9e22901104e5f0c6c2d585de743e63507339fbbb26ff182b,epKa4KFcJbP8EsyAeQrSTBgbiogR2NwT,1,0,"2021-04-20 16:22:54","2021-07-02 09:39:45","2021-07-02 09:39:45"
+3,1,1,2,大澤先生,商品編集,bikenosawa,145fe3fe8c289055480183c6f9e622becddb94a5e8a9eb1dd09e5312112dfeb5,db2d48b028,2,0,"2021-05-18 11:39:51","2021-06-04 13:52:27","2021-06-04 13:52:27"

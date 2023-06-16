@@ -1,0 +1,29 @@
+Plugin\EccubePaymentLite3\Entity\RegularProduct:
+    type: entity
+    table: plg_paylite_regular_product
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\RegularProductRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        regular_flg:
+            type: smallint
+            nullable: false
+        create_flg:
+            type: smallint
+            nullable: false
+        product_type_id:
+            type: integer
+            nullable: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    lifecycleCallbacks: {  }

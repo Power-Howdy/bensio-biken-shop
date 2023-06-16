@@ -1,0 +1,221 @@
+{#
+/*
+ * This file is part of EC-CUBE
+ *
+ * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * http://www.ec-cube.co.jp/
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['setting', 'shop', 'shop_index'] %}
+
+{% block title %}基本情報設定{% endblock %}
+{% block sub_title %}SHOPマスター{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+<script src="{{ app.config.admin_urlpath }}/assets/js/file_manager.js"></script>
+<script src="//ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script>
+$(function() {
+    $('#zip-search').click(function(event) {
+        AjaxZip3.zip2addr('shop_master[zip][zip01]', 'shop_master[zip][zip02]', 'shop_master[address][pref]', 'shop_master[address][addr01]');
+    });
+});
+</script>
+{% endblock javascript %}
+
+
+{% block main %}
+
+    <div class="row" id="aside_wrap">
+        <form name="form1" role="form" class="form-horizontal" id="point_form" method="post" action="" enctype="multipart/form-data">
+        <input type="hidden" name="mode" value="" />
+        <input type="hidden" name="receipt_logo" value="{{ receipt_logo }}" />
+        {{ form_widget(form._token) }}
+
+            <div id="detail_wrap" class="col-md-9">
+                <div id="detail_box" class="box">
+                    <div id="detail_box__header" class="box-header">
+                        <h3 class="box-title">基本情報編集</h3>
+                    </div><!-- /.box-header -->
+                    <div id="detail_box__body" class="box-body">
+
+                        {{ form_row(form.company_name) }}
+                        {{ form_row(form.company_kana) }}
+                        {{ form_row(form.shop_name) }}
+                        {{ form_row(form.shop_kana) }}
+                        {{ form_row(form.shop_name_eng) }}
+
+                        {# 住所：郵便番号 #}
+                        <div id="detail_box__address" class="form-group {% if form.zip.zip01.vars.errors is not empty or form.zip.zip02.vars.errors is not empty %}has-error{% endif %}">
+                            {{ form_label(form.address) }}
+                            <div id="detail_box__zip" class="col-sm-9 col-lg-10 input_zip form-inline">
+                                〒{{ form_widget(form.zip.zip01) }}-{{ form_widget(form.zip.zip02) }}
+                                {{ form_errors(form.zip.zip01) }}
+                                {{ form_errors(form.zip.zip02) }}
+                                <span><button type="button" id="zip-search" class="btn btn-default btn-sm">郵便番号から自動入力</button></span>
+                            </div>
+                        </div>
+                        {# 住所：都道府県 #}
+                        <div id="detail_box__pref" class="form-group {% if form.address.pref.vars.errors is not empty %}has-error{% endif %}">
+                            <div class="col-sm-offset-2 col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.address.pref) }}
+                                {{ form_errors(form.address.pref) }}
+                            </div>
+                        </div>
+                        {# 住所：住所1 #}
+                        <div id="detail_box__addr01" class="form-group {% if form.address.addr02.vars.errors is not empty  %}has-error{% endif %}">
+                            <div class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                {{ form_widget(form.address.addr01, { attr : { placeholder : '市区町村名（例：千代田区神田神保町）'}} ) }}
+                                {{ form_errors(form.address.addr01) }}
+                            </div>
+                        </div>
+                        {# 住所：住所2 #}
+                        <div id="detail_box__addr02" class="form-group {% if form.address.addr02.vars.errors is not empty  %}has-error{% endif %}">
+                            <div class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                {{ form_widget(form.address.addr02, { attr : { placeholder : '番地・ビル名（例：1-3-5）' }}) }}
+                                {{ form_errors(form.address.addr02) }}
+                            </div>
+                        </div>
+                        {# 電話番号 #}
+                        <div id="detail_box__tel" class="form-group">
+                            {{ form_label(form.tel) }}
+                            <div class="col-sm-9 col-lg-10 input_tel form-inline {% if form.tel.tel01.vars.errors is not empty or form.tel.tel02.vars.errors is not empty or form.tel.tel03.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.tel.tel01) }}-{{ form_widget(form.tel.tel02) }}-{{ form_widget(form.tel.tel03) }}
+                                {{ form_errors(form.tel.tel01) }}
+                                {{ form_errors(form.tel.tel02) }}
+                                {{ form_errors(form.tel.tel03) }}
+                            </div>
+                        </div>
+                        {# FAX番号 #}
+                        <div id="detail_box__fax" class="form-group">
+                            {{ form_label(form.fax) }}
+                            <div class="col-sm-9 col-lg-10 input_tel form-inline {% if form.fax.fax01.vars.errors is not empty or form.fax.fax02.vars.errors is not empty or form.fax.fax03.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.fax.fax01) }}-{{ form_widget(form.fax.fax02) }}-{{ form_widget(form.fax.fax03) }}
+                                {{ form_errors(form.fax.fax01) }}
+                                {{ form_errors(form.fax.fax02) }}
+                                {{ form_errors(form.fax.fax03) }}
+                            </div>
+                        </div>
+
+                        {{ form_row(form.business_hour) }}
+                        {{ form_row(form.receipt_number) }}
+                        
+                        <div id="upload_box__body" class="form-group">
+                            <label class="col-sm-2 control-label">ロゴ画像</label>
+                            <div id="upload_box__file" class="col-sm-8 col-lg-9 padT07">
+                                {% if receipt_logo == '' %}
+                                    <svg id="icon_no_image" class="cb cb-photo no-image"> <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cb-photo"></use></svg>
+                                {% else %}
+                                    <img src="{{ app.config.image_save_urlpath }}/{{ receipt_logo }}" />
+                                {% endif %}
+                                {{ form_widget(form.receipt_logo, { attr : { accept : 'image/*' } }) }}
+                                <div class="marT10"><a class="btn btn-default btn-sm" href="javascript;" onclick="eccube.setModeAndSubmit('upload','',''); return false;">アップロード</a></div>
+                            </div>
+                        </div>
+                        {{ form_row(form.email01) }}
+                        {{ form_row(form.email02) }}
+                        {{ form_row(form.email03) }}
+                        {{ form_row(form.email04) }}
+                        {{ form_row(form.good_traded) }}
+                        {{ form_row(form.message) }}
+
+                        <div class="extra-form">
+                            {% for f in form.getIterator %}
+                                {% if f.vars.name matches '[^plg*]' %}
+                                    {{ form_row(f) }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+                <div id="delivery_fee_box" class="box">
+                    <div id="delivery_fee_box__header" class="box-header">
+                        <h3 class="box-title">送料設定</h3>
+                    </div><!-- /.box-header -->
+                    <div id="delivery_fee_box__body" class="box-body">
+
+                        {{ form_row(form.delivery_free_amount) }}
+                        {{ form_row(form.delivery_free_quantity) }}
+                        {{ form_row(form.option_product_delivery_fee) }}
+                        {{ form_row(form.option_multiple_shipping) }}
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+                <div id="customer_box" class="box">
+                    <div id="customer_box__header" class="box-header">
+                        <h3 class="box-title">会員設定</h3>
+                    </div><!-- /.box-header -->
+                    <div id="customer_box__body" class="box-body">
+
+                        {{ form_row(form.option_customer_activate) }}
+                        {{ form_row(form.option_mypage_order_status_display) }}
+                        {{ form_row(form.option_favorite_product) }}
+                        {{ form_row(form.option_remember_me) }}
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+                <div id="product_box" class="box">
+                    <div id="product_box__header" class="box-header">
+                        <h3 class="box-title">商品設定</h3>
+                    </div><!-- /.box-header -->
+                    <div id="product_box__body" class="box-body">
+
+                        {{ form_row(form.nostock_hidden) }}
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+                <div id="map_box" class="box">
+                    <div id="map_box__header" class="box-header">
+                        <h3 class="box-title">地図設定</h3>
+                    </div><!-- /.box-header -->
+                    <div id="map_box__body" class="box-body">
+
+                        {{ form_row(form.latitude) }}
+                        {{ form_row(form.longitude) }}
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+
+            </div>
+            <div class="col-md-3" id="aside_column">
+                <div id="common_box" class="col_inner">
+                    <div id="common_button_box" class="box no-header">
+                        <div id="common_button_box__body" class="box-body">
+                            <div id="common_button_box__insert_button_area" class="row text-center">
+                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                    <button class="btn btn-primary btn-block btn-lg" type="submit">登録</button>
+                                </div>
+                            </div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div>
+            </div><!-- /.col -->
+
+        </form>
+    </div>
+
+{% endblock %}

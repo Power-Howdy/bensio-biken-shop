@@ -1,0 +1,205 @@
+{% extends 'default_frame.twig' %}
+
+{% block title %}{{ tpl_subtitle }}{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+{% block main %}
+
+    <div class="row" id="aside_wrap">
+        <form name="form1" role="form" novalidate class="form-horizontal" id="point_form" method="post" action="">
+            {{ form_widget(form._token) }}
+            <div class="col-md-9">
+
+
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">設定</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label required">契約コード<span
+                                        class="text-danger"> *</span></label>
+                            <div class="col-sm-10 {% if form.contract_code.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.contract_code) }}
+                                {{ form_errors(form.contract_code) }}
+                            </div>
+                        </div>
+                        <div class="form-group"
+                             {% if form.environmental_setting.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required"> 環境設定<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.environmental_setting.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.environmental_setting) }}
+                                {{ form_errors(form.environmental_setting) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             {% if form.credit_payment_setting.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required"> 環境設定<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.credit_payment_setting.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.credit_payment_setting) }}
+                                {{ form_errors(form.credit_payment_setting) }}
+                            </div>
+                        </div>
+                        <div class="form-group"
+                             {% if form.use_payment.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required">利用決済方法<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.use_payment.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.use_payment) }}
+                                {{ form_errors(form.use_payment) }}
+                            </div>
+                        </div>
+                        <div class="form-group"
+                             {% if form.use_convenience.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required">利用コンビニ<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.use_convenience.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.use_convenience) }}
+                                {{ form_errors(form.use_convenience) }}
+                            </div>
+                        </div>
+                        <div class="form-group"
+                             {% if form.card_expiration_notification_days.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required">カード有効期限切れ通知日数<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.card_expiration_notification_days.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.card_expiration_notification_days) }}
+                                {{ form_errors(form.card_expiration_notification_days) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-header">
+                        <h3 class="box-title">定期課金設定</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group"
+                             {% if form.regular.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required"> 定期課金機能<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.regular.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.regular) }}
+                                {{ form_errors(form.regular) }}
+                                <p class='small'>*定期課金機能を利用するにはクレジットカード決済が有効である必要があります。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-header">
+                        <h3 class="box-title">不正アクセスブロック機能</h3>
+                        <div style="margin-left: 10px;">
+                            <p>不正アクセスブロック機能は「クレジットカード決済」「登録済みのクレジットカードで決済」を対象とした機能です。</p>
+                            <p>下記で設定したアクセス頻度の上限を超えた場合は設定したブロック時間分、クレジットカード情報入力ページへのアクセスをブロックします。</p>
+                            <p>不正アクセス対象外としたいIPアドレスはホワイトリストにて設定が可能です。</p>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group"
+                             {% if form.block_mode.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label required"> ブロックモード<span class="text-danger"> *</span></label>
+
+                            <div class="col-sm-10 {% if form.block_mode.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.block_mode) }}
+                                {{ form_errors(form.block_mode) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             {% if form.access_frequency.vars.errors is not empty or form.access_frequency_time.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label"> アクセス頻度</label>
+
+                            <div>
+                                <div class="col-sm-2 col-lg-2 {% if form.access_frequency_time.vars.errors is not empty %}has-error{% endif %}">
+                                    {{ form_widget(form.access_frequency_time) }}
+                                    {{ form_errors(form.access_frequency_time) }}
+                                </div>
+                                <div class="col-sm-2 col-lg-2">
+                                    秒間に
+                                </div>
+
+                                <div class="col-sm-2 col-lg-2 {% if form.access_frequency.vars.errors is not empty %}has-error{% endif %}">
+                                    {{ form_widget(form.access_frequency) }}
+                                    {{ form_errors(form.access_frequency) }}
+                                </div>
+                                <div class="col-sm-3 col-lg-3">
+                                    回アクセスされた場合ブロックする
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             {% if form.block_time.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label"> ブロック時間</label>
+
+                            <div class="col-sm-3 col-lg-3 {% if form.block_time.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.block_time) }}
+                                {{ form_errors(form.block_time) }}
+                            </div>
+                            <div class="col-sm-2 col-lg-2">
+                                秒
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             {% if form.white_list.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label"> ホワイトリスト</label>
+
+                            <div class="col-sm-9 col-lg-10 {% if form.white_list.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.white_list) }}
+                                {{ form_errors(form.white_list) }}
+                                <span id="helpBlock" class="help-block">
+                                    ※カンマ区切りで複数指定可
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-header">
+                        <h3 class="box-title">IPのブラックリスト機能</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group"
+                             {% if form.ip_black_lists.vars.errors is not empty %}has-error{% endif %}>
+                            <label class="col-sm-2 control-label"> ブラックリスト</label>
+
+                            <div class="col-sm-9 col-lg-10 {% if form.ip_black_lists.vars.errors is not empty %}has-error{% endif %}">
+                                {{ form_widget(form.ip_black_lists) }}
+                                {{ form_errors(form.ip_black_lists) }}
+                                <span id="helpBlock" class="help-block">
+                                    ※カンマ区切りで複数指定可
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+            <div class="col-md-3" id="aside_column">
+                <div class="col_inner">
+                    <div class="box no-header">
+                        <div class="box-body">
+                            <div class="row text-center">
+                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                    <button class="btn btn-primary btn-block btn-lg" onclick="document.form1.submit();">
+                                        この内容で登録する
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+            </div>
+            <!-- /.col -->
+        </form>
+    </div>
+
+
+{% endblock %}

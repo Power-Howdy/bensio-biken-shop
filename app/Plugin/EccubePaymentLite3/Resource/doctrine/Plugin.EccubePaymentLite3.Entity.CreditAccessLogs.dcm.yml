@@ -1,0 +1,24 @@
+Plugin\EccubePaymentLite3\Entity\CreditAccessLogs:
+    type: entity
+    table: plg_paylite_credit_access_logs
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\CreditAccessLogsRepository
+    indexes:
+        plg_paylite_credit_access_logs_ip_address_key:
+            columns:
+                - ip_address
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        ip_address:
+            type: string
+            nullable: false
+        access_date:
+            type: datetime
+            nullable: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,701 @@
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['order', 'epsilon_regular_order_master'] %}
+
+{% block title %}受注管理{% endblock %}
+{% block sub_title %}定期受注編集{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme searchCustomerModalForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme searchProductModalForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+<script src="//ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script>
+$(function() {
+    $('#zip-search').click(function() {
+        AjaxZip3.zip2addr('epsilon_regular_order[zip][zip01]', 'epsilon_regular_order[zip][zip02]', 'epsilon_regular_order[address][pref]', 'epsilon_regular_order[address][addr01]');
+    });
+
+    // 注文者情報をコピー
+    $('.copyCustomerToShippingButton').on('click', function() {
+        var data = $(this).data();
+        var idx = data.idx;
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_name_name01').val($('#epsilon_regular_order_name_name01').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_name_name02').val($('#epsilon_regular_order_name_name02').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_kana_kana01').val($('#epsilon_regular_order_kana_kana01').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_kana_kana02').val($('#epsilon_regular_order_kana_kana02').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_zip_zip01').val($('#epsilon_regular_order_zip_zip01').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_zip_zip02').val($('#epsilon_regular_order_zip_zip02').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_address_pref').val($('#epsilon_regular_order_address_pref').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_address_addr01').val($('#epsilon_regular_order_address_addr01').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_address_addr02').val($('#epsilon_regular_order_address_addr02').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_email').val($('#epsilon_regular_order_email').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_tel_tel01').val($('#epsilon_regular_order_tel_tel01').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_tel_tel02').val($('#epsilon_regular_order_tel_tel02').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_tel_tel03').val($('#epsilon_regular_order_tel_tel03').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_fax_fax01').val($('#epsilon_regular_order_fax_fax01').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_fax_fax02').val($('#epsilon_regular_order_fax_fax02').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_fax_fax03').val($('#epsilon_regular_order_fax_fax03').val());
+        $('#epsilon_regular_order_RegularShippings_' + idx + '_company_name').val($('#epsilon_regular_order_company_name').val());
+    });
+
+    $('#searchProductModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var idx = button.data('idx');
+        var modal = $(this);
+        modal.find('#searchProductModalButton').attr('data-idx', idx);
+    });
+
+
+    // 商品検索
+    $('#searchProductModalButton').on('click', function() {
+        var tbody = $('#searchProductModalList tbody');
+        tbody.children().remove();
+
+        var data = $(this).data();
+        shipment_idx = data.idx;
+        shipmentItem_idx = $('.shipment_item_idx' + shipment_idx).length;
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'html',
+            data: {
+                'multi' : $('#admin_search_regular_product_multi').val(),
+                'category_id' : $('#admin_search_regular_product_category_id').val()
+            },
+            url: '{{ url('paylite_regular_order_search_product') }}',
+            success: function(data) {
+                // モーダルに結果を書き出し.
+                $('#searchProductModalList').html(data);
+            },
+            error: function() {
+                alert('search product failed.');
+            }
+        });
+    });
+
+    // 受注明細行の行数カウンタ.
+    // 受注登録・編集画面上でグローバルな変数.
+    // search_regular_product.twig/regular_order_detail_prototype.twigで利用しています.
+    regular_order_details_count = '{{ form.RegularOrderDetails|length }}';
+
+    // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
+    $("input").on("keydown", function(e) {
+        if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+
+    $(".delete-item").on("click", function(){
+        $(this).parents(".item_box").remove();
+        regular_order_details_count--;
+
+        onChangeRegularOrderDetailCount(regular_order_details_count);
+    });
+
+    var onChangeRegularOrderDetailCount = function(regular_order_details_count) {
+        if (regular_order_details_count == 1) {
+            $(".delete-item").attr("disabled", "disabled");
+        } else {
+            $(".delete-item").removeAttr("disabled");
+        }
+    };
+
+    onChangeRegularOrderDetailCount();
+
+
+    // 配送業者選択時にお届け時間を設定
+    var times = {{ shippingDeliveryTimes|raw }};
+
+    $('.shipping-delivery').change(function(){
+        var data = $(this).data();
+        setShippingDeliveryTime($(this).val(), data.idx);
+    });
+
+    function setShippingDeliveryTime(val, idx){
+        var $shippingDeliveryTime = $('.shipping-delivery-time[data-idx="' + idx + '"]');
+        $shippingDeliveryTime.find('option').remove();
+        $shippingDeliveryTime.append($('<option></option>').val('').text('指定なし'));
+
+        if (typeof(times[val]) !== 'undefined') {
+            for (var key in times[val]){
+                text = times[val][key];
+                $shippingDeliveryTime.append($('<option></option>')
+                    .val(key)
+                    .text(text));
+            }
+        }
+    }
+
+});
+var setModeAndSubmit = function(mode, keyname, keyid) {
+    document.form1.modal.value = mode;
+    if(keyname !== undefined && keyname !== "" && keyid !== undefined && keyid !== "") {
+        document.form1[keyname].value = keyid;
+    }
+    document.form1.submit();
+};
+
+</script>
+{% endblock javascript %}
+
+{% block main %}
+<div class="row" id="aside_wrap">
+    <form name="form1" method="post" action="?">
+    <input type="hidden" name="modal" value="">
+    {{ form_widget(form._token) }}
+        <div class="col-md-12">
+            <div class="col_inner">
+                <div class="box no-header">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <h4>定期受注番号 <span class="number">{{ RegularOrder.id }}</span></h4>
+                                <div class="form-group">
+                                    {{ form_widget(form.RegularStatus) }}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-sm-offset-2">
+                                <p>定期継続回数：{{ RegularOrder.regular_order_count }}</p>
+                                <p><svg class="cb cb-clock"> <use xlink:href="#cb-clock" /></svg>受注日：{{ RegularOrder.order_date|date_format }}</p>
+                                <p><svg class="cb cb-clock"> <use xlink:href="#cb-clock" /></svg>更新日：{{ RegularOrder.update_date|date_format }}</p>
+                            </div>
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+            <div class="box accordion">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">注文者情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel" style="display: block;">
+                    <div class="order_list form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3 col-lg-2">会員ID</div>
+                            <div class="col-sm-9 col-lg-10">
+                                <p id="order_CustomerId">{{ form.Customer.vars.value is empty ? '非会員' :  form.Customer.vars.value }}</p>
+                                {{ form_widget(form.Customer) }}
+                                {{ form_errors(form.Customer) }}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.name) }}
+                            <div class="col-sm-9 col-lg-10 input_name form-inline">
+                                {{ form_widget(form.name.name01, { attr : { placeholder: '姓' }}) }}
+                                {{ form_widget(form.name.name02, { attr : { placeholder: '名' }}) }}
+                                {{ form_errors(form.name.name01) }}
+                                {{ form_errors(form.name.name02) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.kana) }}
+                            <div class="col-sm-9 col-lg-10 input_name form-inline">
+                                {{ form_widget(form.kana.kana01, { attr : { placeholder : 'セイ' }}) }}
+                                {{ form_widget(form.kana.kana02, { attr : { placeholder : 'メイ' }}) }}
+                                {{ form_errors(form.kana.kana01) }}
+                                {{ form_errors(form.kana.kana02) }}
+                            </div>
+                        </div>
+                        {# 住所：郵便番号 #}
+                        <div class="form-group">
+                            {{ form_label(form.address) }}
+                            <div class="col-sm-9 col-lg-10 input_zip form-inline">
+                                〒{{ form_widget(form.zip.zip01) }}-{{ form_widget(form.zip.zip02) }}
+                                {{ form_errors(form.zip) }}
+                                {{ form_errors(form.zip.zip01) }}
+                                {{ form_errors(form.zip.zip02) }}
+                                <span><button type="button" id="zip-search" class="btn btn-default btn-sm">郵便番号から自動入力</button></span>
+                            </div>
+                        </div>
+                        {# 住所：都道府県 #}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-9 col-lg-10 form-inline">
+                                {{ form_widget(form.address.pref) }}
+                                {{ form_errors(form.address.pref) }}
+                            </div>
+                        </div>
+                        {# 住所：住所1 #}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                {{ form_widget(form.address.addr01, { attr : { placeholder : '市区町村名（例：千代田区神田神保町）'}} ) }}
+                                {{ form_errors(form.address.addr01) }}
+                            </div>
+                        </div>
+                        {# 住所：住所2 #}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                {{ form_widget(form.address.addr02, { attr : { placeholder : '番地・ビル名（例：1-3-5）' }}) }}
+                                {{ form_errors(form.address.addr02) }}
+                            </div>
+                        </div>
+                        {# メールアドレス #}
+                        <div class="form-group">
+                            {{ form_label(form.email) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.email) }}
+                                {{ form_errors(form.email) }}
+                            </div>
+                        </div>
+                        {# 電話番号 #}
+                        <div class="form-group">
+                            {{ form_label(form.tel) }}
+                            <div class="col-sm-9 col-lg-10 input_tel form-inline">
+                                {{ form_widget(form.tel.tel01) }}-{{ form_widget(form.tel.tel02) }}-{{ form_widget(form.tel.tel03) }}
+                                {{ form_errors(form.tel.tel01) }}
+                                {{ form_errors(form.tel.tel02) }}
+                                {{ form_errors(form.tel.tel03) }}
+                            </div>
+                        </div>
+                        {# FAX番号 #}
+                        <div class="form-group">
+                            {{ form_label(form.fax) }}
+                            <div class="col-sm-9 col-lg-10 input_tel form-inline">
+                                {{ form_widget(form.fax.fax01) }}-{{ form_widget(form.fax.fax02) }}-{{ form_widget(form.fax.fax03) }}
+                                {{ form_errors(form.fax) }}
+                            </div>
+                        </div>
+                        {# 会社名 #}
+                        <div class="form-group">
+                            {{ form_label(form.company_name) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.company_name) }}
+                                {{ form_errors(form.company_name) }}
+                            </div>
+                        </div>
+                        {# 注文時お問い合わせ #}
+                        <div class="form-group">
+                            {{ form_label(form.message) }}
+                            <div class="col-sm-9 col-lg-10">
+                                {{ form_widget(form.message, { attr : { placeholder : '3000文字まで入力可能' }}) }}
+                                {{ form_errors(form.message) }}
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+
+            <div class="box accordion">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">受注商品情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel" style="display: block;">
+                    <div class="order_list">
+                        <div class="btn_area">
+                            <ul>
+                                {% if BaseInfo.optionMultipleShipping != 1 %}
+                                <li><a class="btn btn-default btn-block btn-sm" data-toggle="modal" data-target="#searchProductModal">商品の追加</a></li>
+                                {% endif %}
+                                <li><button type="submit" class="btn btn-default btn-block btn-sm" name="mode" value="calc">計算結果の更新</button></li>
+                            </ul>
+                        </div>
+                        <div class="tableish"
+                             id="regular_order_detail_list"
+                             data-prototype="
+                                {% filter escape %}
+                                     {{ include('EccubePaymentLite3/Twig/admin/Order/regular_order_detail_prototype.twig', { 'regularOrderDetailForm': form.RegularOrderDetails.vars.prototype }) }}
+                                {% endfilter %}">
+
+                            {% for regularOrderDetailForm in form.RegularOrderDetails %}
+								<div class="item_box">
+                                {{ form_widget(regularOrderDetailForm.Product) }}
+                                {{ form_widget(regularOrderDetailForm.ProductClass) }}
+
+                                    <div class="item_detail">
+                                        <div class="item_name_area">
+                                            <strong class="item_name">{{ regularOrderDetailForm.vars.value.product_name }}</strong><br>
+                                            <span class="item_id small">{{ regularOrderDetailForm.vars.value.product_code }}</span>
+                                            <span class="item_pattern small">
+                                                {% if regularOrderDetailForm.vars.value.class_category_name1 is not empty %}
+                                                / (
+                                                    {{ regularOrderDetailForm.vars.value.class_name1 }}：
+                                                    {{ regularOrderDetailForm.vars.value.class_category_name1 }}
+                                                    {% if regularOrderDetailForm.vars.value.class_category_name2 is not empty %}
+                                                        /
+                                                        {{ regularOrderDetailForm.vars.value.class_name2 }}：
+                                                        {{ regularOrderDetailForm.vars.value.class_category_name2 }}
+                                                    {% endif %}
+                                                    )
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 col-lg-3 form-group form-inline text-right">
+                                                <span class="input-group item_price col-xs-8 col-sm-6 col-md-12">
+                                                    {{ form_widget(regularOrderDetailForm.price) }}
+                                                    {{ form_errors(regularOrderDetailForm.price) }}
+                                                </span>
+                                            </div>
+                                            <div class="col-md-4 col-lg-3 form-group form-inline text-right">
+                                                <span class="item_quantity">
+                                                    {% if BaseInfo.optionMultipleShipping %}
+                                                        数量：{{ form_widget(regularOrderDetailForm.quantity, {'read_only': 'readonly'}) }}
+                                                    {% else %}
+                                                    数量：{{ form_widget(regularOrderDetailForm.quantity) }}
+                                                    {% endif %}
+                                                    {{ form_errors(regularOrderDetailForm.quantity) }}
+                                                </span>
+                                            </div>
+                                            <div class="col-md-4 col-lg-3 form-group form-inline text-right">
+                                            	<span class="item_tax">
+                                                    税率：
+                                                    <span class="input-group">
+                                                    {{ form_widget(regularOrderDetailForm.tax_rate) }}
+                                                    {{ form_errors(regularOrderDetailForm.tax_rate) }}
+                                                    <span class="input-group-addon">%</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="col-md-12 col-lg-3 item_subtotal text-right">
+                                                <span>小計：</span> {{ regularOrderDetailForm.vars.value.total_price|price }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    {% if BaseInfo.optionMultipleShipping %}
+                                    {% else %}
+                                    <div class="icon_edit">
+                                        <button class="btn btn-default btn-sm delete-item">削除</button>
+                                    </div>
+                                    {% endif %}
+                                </div><!-- /.item_box -->
+                            {% endfor %}
+                        </div>
+
+                        <div class="row with-border2 no-margin text-right">
+                            <div class="col-lg-7 col-lg-offset-5">
+                                <dl class="dl-horizontal">
+                                    <dt>小計：</dt>
+                                    <dd>{{ RegularOrder.subtotal|price }}</dd>
+                                    <dt>値引き：</dt>
+                                    <dd class="form-group form-inline">
+                                        {{ form_widget(form.discount) }}
+                                        {{ form_errors(form.discount) }}
+                                    </dd>
+                                    <dt>送料：</dt>
+                                    <dd class="form-group form-inline">
+                                        {{ form_widget(form.delivery_fee_total) }}
+                                        {{ form_errors(form.delivery_fee_total) }}
+                                    </dd>
+                                    <dt>手数料：</dt>
+                                    <dd class="form-group form-inline">
+                                        {{ form_widget(form.charge) }}
+                                        {{ form_errors(form.charge) }}
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div class="row with-border2 no-margin text-right  ta">
+                            <div class="col-lg-7 col-lg-offset-5">
+                                <dl class="dl-horizontal">
+                                    <dt>合計：</dt>
+                                    <dd>{{ RegularOrder.total|price }}</dd>
+                                    <dt>お支払合計：</dt>
+                                    <dd>{{ RegularOrder.payment_total|price }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# お支払情報 #}
+            <div class="box accordion">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">お支払情報<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel" style="display: block;">
+                    <dl class="dl-horizontal">
+                        <dt>お支払方法</dt>
+                        <dd class="form-group form-inline">
+                            {{ form.vars.value.payment_method }}<br/>
+                            {{ form_widget(form.Payment) }}
+                            {{ form_errors(form.Payment) }}
+                            <p class="small">お支払方法の変更に伴う手数料の変更は手動にてお願いします。</p>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            {# お届け先情報 #}
+            {% if BaseInfo.optionMultipleShipping %}
+            <div><button type="submit" class="btn btn-default" name="mode" value="add_delivery">お届け先を新規追加</button></div>
+            {% endif %}
+            {% for regularShippingForm in form.RegularShippings %}
+            {% set shippingIndex = loop.index0 %}
+            <div class="box accordion">
+                <div class="box-header toggle active">
+                    <h3 class="box-title">お届け先情報{% if form.RegularShippings|length > 1 %}({{ loop.index }}){% endif %}<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                    <div class="box-body accpanel" style="display: block;">
+                    <div class="order_list">
+                        <div class="btn_area">
+                            <ul>
+                                <li><a class="btn btn-default btn-block btn-sm copyCustomerToShippingButton" data-idx="{{ loop.index0 }}">注文者情報をコピー</a></li>
+                                {% if BaseInfo.optionMultipleShipping %}
+                                <li><a class="btn btn-default btn-block btn-sm" data-toggle="modal" data-target="#searchProductModal" data-idx="{{ loop.index0 }}">商品の追加</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                        {% if BaseInfo.optionMultipleShipping %}
+                        <div class="tableish"
+                             id="regular_shipment_item_list{{ loop.index0 }}"
+                             data-prototype="
+                                {% filter escape %}
+                                     {{ include('EccubePaymentLite3/Twig/admin/Order/regular_shipment_item_prototype.twig', { 'regularShipmentItemForm': regularShippingForm.RegularShipmentItems.vars.prototype }) }}
+                                {% endfilter %}">
+
+                        {% for regularShipmentItemForm in regularShippingForm.RegularShipmentItems %}
+                            {{ form_widget(regularShipmentItemForm.Product) }}
+                            {{ form_widget(regularShipmentItemForm.ProductClass) }}
+                            <div class="item_box shipment_item_idx{{ shippingIndex }}">
+                                <div class="item_detail">
+                                    <div class="item_name_area">
+                                        <strong class="item_name">{{ regularShipmentItemForm.vars.value.product_name }}</strong><br>
+                                        <span class="item_id small">{{ regularShipmentItemForm.vars.value.product_code }}</span>
+                                            <span class="item_pattern small">
+                                                {% if regularShipmentItemForm.vars.value.class_category_name1 is not empty %}
+                                                    / (
+                                                    {{ regularShipmentItemForm.vars.value.class_name1 }}：
+                                                    {{ regularShipmentItemForm.vars.value.class_category_name1 }}
+                                                    {% if regularShipmentItemForm.vars.value.class_category_name2 is not empty %}
+                                                        /
+                                                        {{ regularShipmentItemForm.vars.value.class_name2 }}：
+                                                        {{ regularShipmentItemForm.vars.value.class_category_name2 }}
+                                                    {% endif %}
+                                                    )
+                                                {% endif %}
+                                            </span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 col-lg-3 form-group form-inline text-right">
+                                            {{ form_widget(regularShipmentItemForm.price, {'read_only': 'readonly'}) }}
+                                        </div>
+                                        <div class="col-md-4 col-lg-3 form-group form-inline text-right">
+                                            <span class="item_quantity">
+                                                数量：{{ form_widget(regularShipmentItemForm.quantity, {'attr': {'class': 'shipment_quantity'}}) }}
+                                                {{ form_errors(regularShipmentItemForm.quantity) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /.item_box -->
+                            {{ form_widget(regularShipmentItemForm.itemidx) }}
+                        {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <hr>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.name) }}
+                                <div class="col-sm-9 col-lg-10 input_name form-inline">
+                                    {{ form_widget(regularShippingForm.name.name01, { attr : { placeholder: '姓' }}) }}
+                                    {{ form_widget(regularShippingForm.name.name02, { attr : { placeholder: '名' }}) }}
+                                    {{ form_errors(regularShippingForm.name.name01) }}
+                                    {{ form_errors(regularShippingForm.name.name02) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.kana) }}
+                                <div class="col-sm-9 col-lg-10 input_name form-inline">
+                                    {{ form_widget(regularShippingForm.kana.kana01, { attr : { placeholder : 'セイ' }}) }}
+                                    {{ form_widget(regularShippingForm.kana.kana02, { attr : { placeholder : 'メイ' }}) }}
+                                    {{ form_errors(regularShippingForm.kana.kana01) }}
+                                    {{ form_errors(regularShippingForm.kana.kana02) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.company_name) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_widget(regularShippingForm.company_name) }}
+                                    {{ form_errors(regularShippingForm.company_name) }}
+                                </div>
+                            </div>
+                            {# 住所：郵便番号 #}
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.address) }}
+                                <div class="col-sm-9 col-lg-10 input_zip form-inline">
+                                    〒{{ form_widget(regularShippingForm.zip.zip01) }}-{{ form_widget(regularShippingForm.zip.zip02) }}
+                                    {{ form_errors(regularShippingForm.zip) }}
+                                    {{ form_errors(regularShippingForm.zip.zip01) }}
+                                    {{ form_errors(regularShippingForm.zip.zip02) }}
+                                </div>
+                            </div>
+                            {# 住所：都道府県 #}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-9 col-lg-10 form-inline">
+                                    {{ form_widget(regularShippingForm.address.pref) }}
+                                    {{ form_errors(regularShippingForm.address.pref) }}
+                                </div>
+                            </div>
+                            {# 住所：住所1 #}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                    {{ form_widget(regularShippingForm.address.addr01, { attr : { placeholder : '市区町村名（例：千代田区神田神保町）'}} ) }}
+                                    {{ form_errors(regularShippingForm.address.addr01) }}
+                                </div>
+                            </div>
+                            {# 住所：住所2 #}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-9 col-lg-10">
+                                    {{ form_widget(regularShippingForm.address.addr02, { attr : { placeholder : '番地・ビル名（例：1-3-5）' }}) }}
+                                    {{ form_errors(regularShippingForm.address.addr02) }}
+                                </div>
+                            </div>
+                            {# 電話番号 #}
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.tel) }}
+                                <div class="col-sm-9 col-lg-10 input_tel form-inline">
+                                    {{ form_widget(regularShippingForm.tel.tel01) }}-{{ form_widget(regularShippingForm.tel.tel02) }}-{{ form_widget(regularShippingForm.tel.tel03) }}
+                                    {{ form_errors(regularShippingForm.tel.tel01) }}
+                                    {{ form_errors(regularShippingForm.tel.tel02) }}
+                                    {{ form_errors(regularShippingForm.tel.tel03) }}
+                                </div>
+                            </div>
+                            {# FAX番号 #}
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.fax) }}
+                                <div class="col-sm-9 col-lg-10 input_tel form-inline">
+                                    {{ form_widget(regularShippingForm.fax.fax01) }}-{{ form_widget(regularShippingForm.fax.fax02) }}-{{ form_widget(regularShippingForm.fax.fax03) }}
+                                    {{ form_errors(regularShippingForm.fax) }}
+                                </div>
+                            </div>
+                            {# 配送業者 #}
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.Delivery) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {% if regularShippingForm.vars.value.shipping_delivery_name is not empty %}
+                                    {{ regularShippingForm.vars.value.shipping_delivery_name }}<br/>
+                                    {% endif %}
+                                    {{ form_widget(regularShippingForm.Delivery, {'attr': {'style': 'width:auto', 'class': 'shipping-delivery', 'data-idx': loop.index0}}) }}
+                                    {{ form_errors(regularShippingForm.Delivery) }}
+                                </div>
+                            </div>
+                            {# お届け時間 #}
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.DeliveryTime) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {% if regularShippingForm.vars.value.shipping_delivery_time is not empty %}
+                                    {{ regularShippingForm.vars.value.shipping_delivery_time }}<br/>
+                                    {% else %}
+                                        指定なし
+                                    {% endif %}
+                                    {{ form_widget(regularShippingForm.DeliveryTime, {'attr': {'style': 'width:auto', 'class': 'shipping-delivery-time', 'data-idx': loop.index0}}) }}
+                                    {{ form_errors(regularShippingForm.DeliveryTime) }}
+                                </div>
+                            </div>
+                            {# お届け日 #}
+                            <div class="form-group">
+                                {{ form_label(regularShippingForm.shipping_delivery_date) }}
+                                <div class="col-sm-9 col-lg-10">
+                                    {{ form_widget(regularShippingForm.shipping_delivery_date) }}
+                                    {{ form_errors(regularShippingForm.shipping_delivery_date) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+                            {% endfor %}
+
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">ショップ用メモ欄</h3>
+                </div><!-- /.box-header -->
+                    <div class="box-body">{{ form_widget(form.note) }}</div>
+                </div><!-- /.box -->
+
+            <div class="box accordion">
+                <div class="box-header toggle">
+                    <h3 class="box-title">定期履歴<svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body accpanel">
+                    <div class="table_list">
+                        <div class="table-responsive with-border">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>回数</th>
+                                        <th>受注番号</th>
+                                        <th>作成日時</th>
+                                        <th>更新日時</th>
+                                        <th>入金日</th>
+                                        <th>発送日</th>
+                                        <th>支払方法</th>
+                                        <th>対応状況</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                            {% for no, Order in OrderHistory %}
+                                    <tr>
+                                        <td>{{ no+1 }}</td>
+                                        <td><a href="{{ url('admin_order_edit', { id : Order.id }) }}" target="blank">{{ Order.id }}</a></td>
+                                        <td>{{ Order.create_date|date('Y/m/d H:m:s') }}</td>
+                                        <td>{{ Order.update_date|date('Y/m/d H:m:s') }}</td>
+                                        <td>{{ Order.payment_date|date_format }}</td>
+                                        <td>{{ Order.commit_date|date_format }}</td>
+                                        <td>{{ Order.payment_method }}</td>
+                                        <td>{{ Order.OrderStatus }}</td>
+                                    </tr>
+                            {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+
+            <div class="row btn_area">
+                <p class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" name="mode" value="register">受注情報を登録</button>
+                </p>
+                <!-- /.col -->
+            </div>
+
+            <div class="row hidden-xs hidden-sm">
+                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                    {% if id is not null %}
+                        <p><a href="{{ url('paylite_regular_order_page', { page_no: app.session.get('eccube.plugin.epsilon.admin.regular_order.search.page_no')|default('1') }) }}?resume=1">戻る</a></p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div><!-- /.col -->
+
+    </form>
+</div>
+{% endblock %}
+
+{% block modal %}
+
+{# 商品検索モーダル #}
+<div class="modal fade" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="modal-close" aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">商品検索</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    {{ form_widget(searchProductModalForm.multi, { attr : { placeholder : '商品名・ID・コード' } } ) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(searchProductModalForm.category_id) }}
+                </div>
+                <div class="form-group">
+                    <button type="button" id="searchProductModalButton" class="btn btn-primary">検索</button>
+                </div>
+                <div class="form-group" id="searchProductModalList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

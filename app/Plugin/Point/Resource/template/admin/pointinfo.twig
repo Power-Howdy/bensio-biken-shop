@@ -1,0 +1,112 @@
+{#
+/*
+* This file is part of EC-CUBE
+*
+* Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+* http://www.lockon.co.jp/
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+#}
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['setting', 'shop', 'shop_index'] %}
+
+{% block title %}基本情報設定{% endblock %}
+{% block sub_title %}ポイント設定{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block main %}
+
+    <div class="row" id="aside_wrap">
+        <form name="form1" role="form" class="form-horizontal" id="point_form" method="post"
+              action="{{ url('point_info') }}">
+            {{ form_widget(form._token) }}
+            <div class="col-md-9">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">ポイント確定タイミング</h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group">
+                            <div class="col-sm-3 col-lg-3">ポイント確定タイミング</div>
+                            <div class="col-sm-9 col-lg-9">
+                                {{ form_widget(form.plg_add_point_status) }}
+                                {{ form_errors(form.plg_add_point_status) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">ポイント基本設定</h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group">
+                            <div class="col-sm-3 col-lg-3">基本ポイント付与率</div>
+                            <div class="col-sm-9 col-lg-9">
+                                {{ form_widget(form.plg_basic_point_rate) }}
+                                {{ form_errors(form.plg_basic_point_rate) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3 col-lg-3">ポイント換算レート</div>
+                            <div class="col-sm-9 col-lg-9">
+                                {{ form_widget(form.plg_point_conversion_rate) }}
+                                {{ form_errors(form.plg_point_conversion_rate) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3 col-lg-3">ポイント端数計算方法</div>
+                            <div class="col-sm-9 col-lg-9">
+                                {{ form_widget(form.plg_round_type) }}
+                                {{ form_errors(form.plg_round_type) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3 col-lg-3">ポイント減算方式</div>
+                            <div class="col-sm-9 col-lg-9">
+                                {{ form_widget(form.plg_calculation_type) }}
+                                {{ form_errors(form.plg_calculation_type) }}
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box -->
+                <div id="point_info_box" class="box accordion">
+                    <div id="point_info_box__toggle" class="box-header toggle">
+                        <h3 class="box-title">ポイント機能利用時のご注意
+                            <svg class="cb cb-angle-down icon_down">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#cb-angle-down"></use>
+                            </svg>
+                        </h3>
+                    </div><!-- /.box-header -->
+                    <div id="point_info_box__body" class="box-body accpanel" style="display: block;">
+                        <div class="form-group">
+                            <div class="col-sm-12 col-lg-12">
+                                <p>ポイント機能を利用するにあたっては、お客様との間でトラブルを避けるために、「特定商取引法に基づく表記」などに、利用規約を定めることをおすすめします。経済産業省「企業ポイントに関する消費者保護のあり方（ガイドライン）」等を参考にしてください。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.col -->
+            <div class="col-md-3" id="aside_column">
+                <div class="col_inner">
+                    <div class="box no-header">
+                        <div class="box-body">
+                            <div class="row text-center">
+                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                    <button class="btn btn-primary btn-block btn-lg" type="submit">
+                                        登録
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

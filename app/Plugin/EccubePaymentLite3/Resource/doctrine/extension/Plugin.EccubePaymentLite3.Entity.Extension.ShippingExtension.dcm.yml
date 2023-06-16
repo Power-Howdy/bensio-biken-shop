@@ -1,0 +1,17 @@
+Plugin\EccubePaymentLite3\Entity\Extension\ShippingExtension:
+    type: entity
+    table: plg_paylite_shipping_extension
+    repositoryClass: Plugin\EccubePaymentLite3\Repository\Extension\ShippingExtensionRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: shipping_id
+    fields:
+        tracking_number:
+            type: text
+            nullable: true
+
+    lifecycleCallbacks: {  }

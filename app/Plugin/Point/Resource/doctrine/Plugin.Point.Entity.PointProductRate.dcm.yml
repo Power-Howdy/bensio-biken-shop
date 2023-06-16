@@ -1,0 +1,35 @@
+Plugin\Point\Entity\PointProductRate:
+    type: entity
+    table: plg_point_product_rate
+    repositoryClass: Plugin\Point\Repository\PointProductRateRepository
+    id:
+        plg_point_product_rate_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        product_id:
+            type: integer
+            nullable: false
+            unsigned: false
+        plg_point_product_rate:
+            type: string
+            nullable: true
+            unsigned: false
+        create_date:
+            type: datetime
+            nullable: false
+        update_date:
+            type: datetime
+            nullable: false
+    manyToOne:
+        Product:
+            targetEntity: \Eccube\Entity\Product
+            joinColumn:
+                name: product_id
+                referencedColumnName: product_id
+    lifecycleCallbacks:
+        loadClassMetadata: {  }

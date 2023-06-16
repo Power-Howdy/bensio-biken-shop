@@ -1,0 +1,30 @@
+<script>
+    $(function (){
+        $('#contact_message').after(
+            '<div id="ec_trans_other_payment_wrap" class="row">' +
+                '<div id="ec_trans_other_payment_list_box" class="col-md-12">' +
+                    '<div id="ec_trans_other_payment_list_box__body" class="box">' +
+                        '<div id="ec_trans_other_payment_list_box__header" class="box-header">' +
+                            '<h2 class="heading02">お支払時期について</h2>' +
+                        '</div>' +
+                        '<div id="ec_trans_other_payment_detail_box" class="column is-edit">' +
+                            '<div id="ec_trans_other_payment_box_detail_box__message">詳細は<a href="{{ url('help_tradelaw') }}" target="_blank">こちらのページ</a>をご覧ください</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div id="ec_trans_other_cancel_wrap" class="row">' +
+                '<div id="ec_trans_other_cancel_list_box" class="col-md-12">' +
+                    '<div id="ec_trans_other_cancel_list_box__body" class="box">' +
+                        '<div id="ec_trans_other_cancel_list_box__header" class="box-header">' +
+                            '<h2 class="heading02">キャンセル返品について</h2>' +
+                        '</div>' +
+                        '<div id="ec_trans_other_cancel_detail_box" class="column is-edit">' +
+                            '<div id="ec_trans_other_cancel_box_detail_box__message">詳細は<a href="{{ url('help_tradelaw') }}" target="_blank">こちらのページ</a>をご覧ください</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
+        );
+    });
+</script>

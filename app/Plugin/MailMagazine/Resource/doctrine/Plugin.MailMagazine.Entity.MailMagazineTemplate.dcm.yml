@@ -1,0 +1,36 @@
+Plugin\MailMagazine\Entity\MailMagazineTemplate:
+    type: entity
+    table: plg_mailmaga_template
+    repositoryClass: Plugin\MailMagazine\Repository\MailMagazineTemplateRepository
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+            column: template_id
+            generator:
+                strategy: AUTO
+    fields:
+        subject:
+            type: text
+            nullable: false
+        body:
+            type: text
+            nullable: false
+        html_body:
+            type: text
+            nullable: true
+        del_flg:
+            type: smallint
+            nullable: false
+            unsigned: false
+            default: '0'
+        create_date:
+            type: datetime
+            nullable: false
+
+        update_date:
+            type: datetime
+            nullable: false
+    lifecycleCallbacks: {  }

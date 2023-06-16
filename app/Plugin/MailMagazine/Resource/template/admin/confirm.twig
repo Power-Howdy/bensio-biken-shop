@@ -1,0 +1,162 @@
+{#
+ This file is part of EC-CUBE
+
+ Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+ https://www.ec-cube.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+
+{#
+[メルマガ管理]-[配信内容設定]-[確認]画面
+#}
+
+{% extends 'default_frame.twig' %}
+
+{% set menus = ['mailmagazine', 'mailmagazine'] %}
+
+{% block title %}メルマガ管理{% endblock %}
+{% block sub_title %}配信{% endblock %}
+
+{% form_theme form 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+    <script>
+        function changeAction(action) {
+            document.form1.action = action;
+            document.form1.submit();
+        }
+        $(function () {
+            $('#sendMailMagazine').on('click', function (e) {
+                e.preventDefault();
+                if (confirm('メールマガジンを配信します。\nよろしいですか？')) {
+                    $(this).attr('disabled', 'disabled');
+                    changeAction('{{ url('plugin_mail_magazine_prepare') }}');
+                }
+                return false;
+            });
+            $('#testSendModal input').on('keyup', function() {
+                if (this.checkValidity()) {
+                    $(this).parents('div.form-group').removeClass('has-error');
+                } else {
+                    $(this).parents('div.form-group').addClass('has-error');
+                }
+                if ($('#testSendModal form').get(0).checkValidity()) {
+                    $('#sendTestMail').removeAttr('disabled');
+                } else {
+                    $('#sendTestMail').attr('disabled', 'disabled');
+                }
+            });
+            $('#sendTestMail').on('click', function() {
+                if (confirm('テストメールを送信します。\nよろしいですか？')) {
+                    $.post("{{ url('plugin_mail_magazine_test') }}", {
+                        '_token': $('mail_magazine__token').val(),
+                        'email': $('#testEmail').val(),
+                        'name': $('#testName').val(),
+                        'subject': $('#mail_magazine_subject').val(),
+                        'body': $('#mail_magazine_body').val(),
+                        'htmlBody': $('#mail_magazine_htmlBody').val()
+                    }).done(function(res) {
+                        alert('テストメールを送信しました。');
+                        $('#testSendModal').modal('hide');
+                    }).fail(function (res) {
+                        alert('テストメールの送信に失敗しました。');
+                    });
+                }
+            })
+        })
+    </script>
+{% endblock javascript%}
+
+{% block main %}
+    <form name="form1" role="form" class="form-horizontal" id="form1" method="post" action="">
+    {{ form_widget(form._token) }}
+    <div class="row" id="aside_wrap">
+        <div id="detail_wrap" class="col-md-9">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">配信内容の確認</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th style="width: 20%;">件名</th>
+                                <td>{{ subject_itm }}</td>
+                            </tr>
+                            <tr>
+                                <th>本文 (テキスト形式)</th>
+                                <td><xmp>{{ body_itm }}</xmp></td>
+                            </tr>
+                            <tr>
+                                <th>本文 (HTML形式)</th>
+                                <td><xmp>{{ htmlBody_itm|raw }}</xmp></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="display: none">
+                        {{ form_rest(form) }}
+                    </div>
+
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+            <div id="detail_box__footer" class="row hidden-xs hidden-sm">
+                <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 text-center btn_area">
+                    <p><a href="{{ url('plugin_mail_magazine') }}" onclick="changeAction('{{ url('plugin_mail_magazine_select') }}/{{id}}'); return false;">配信内容の設定に戻る</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="common_box" class="col-md-3">
+            {# 配信するボタン #}
+            <div class="col_inner" id="aside_column">
+                <div class="col_inner">
+                    <div class="box no-header">
+                        <div class="box-body">
+                            <div class="row text-center">
+                                <div class="col-sm-6 col-sm-offset-3 col-md-12 col-md-offset-0">
+                                    <a class="btn btn-primary btn-block btn-lg active" role="button" data-toggle="modal" data-target="#testSendModal">テスト送信する</a>
+                                    <button class="btn btn-danger btn-block btn-lg" id="sendMailMagazine">配信する</button>
+                                </div>
+                            </div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div>
+            </div><!-- /.col -->
+        </div>
+    </div>
+    </form>
+
+{% endblock %}
+{% block modal %}
+    <div id="testSendModal" class="modal" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">テスト送信</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="testEmail" class="col-sm-2 control-label">送信先</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" id="testEmail" placeholder="メールアドレス" value="{{ testMailTo }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="testName" class="col-sm-2 control-label">名前</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="testName" placeholder="名前" value="{{ app.user.name }}" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="sendTestMail">送信</button>
+                    <button class="btn btn-default" data-dismiss="modal">閉じる</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+Eccube\Entity\PaymentOption:
+    type: entity
+    table: dtb_payment_option
+    repositoryClass: Eccube\Repository\PaymentOptionRepository
+    id:
+        delivery_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+        payment_id:
+            type: integer
+            nullable: false
+            unsigned: false
+            id: true
+    manyToOne:
+        Delivery:
+            targetEntity: Eccube\Entity\Delivery
+            inversedBy: PaymentOptions
+            joinColumn:
+                name: delivery_id
+                referencedColumnName: delivery_id
+                nullable: false
+        Payment:
+            targetEntity: Eccube\Entity\Payment
+            inversedBy: PaymentOptions
+            joinColumn:
+                name: payment_id
+                referencedColumnName: payment_id
+                nullable: false
+    lifecycleCallbacks: {  }

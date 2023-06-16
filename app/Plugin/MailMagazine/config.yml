@@ -1,0 +1,13 @@
+name: MailMagazine
+event: MailMagazine
+code: MailMagazine
+version: 1.0.5
+service:
+    - MailMagazineServiceProvider
+orm.path:
+    - /Resource/doctrine
+#form:
+#    onSetData:
+#        Form\Type\PaymentFragmentForm
+const:
+    mail_magazine_dir: ${ROOT_DIR}/app/mail_magazine
