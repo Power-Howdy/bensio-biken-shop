@@ -77,24 +77,26 @@ class GmoEpsilon_Credit extends GmoEpsilon_Base
      */
     function payCreditTokenProcess($Order, $PaymentExtension)
     {
-        // 不正アクセスブロック処理を行う
+        // Block unauthorized access
         $error_page_flg = $this->accessBlockProcess();
-        // ブロック対象の場合エラーを表示し、処理を中断
+        // If it is blocked, display an error and abort the process
         if($error_page_flg){
+            $this->app['monolog.gmoepsilon']->addInfo('Walter Error Checking: error_page_flg');
             $error_title = '購入エラー';
-            $error_message = '購入処理でエラーが発生しました。';
+            $error_message = '購入処理でエラーが発生しました。';//An error occurred during the purchase process.
             return $this->app['view']->render('error.twig', compact('error_title', 'error_message'));
         }
         $token = $this->app['request']->get('token');
-        // リクエストパラメータをセット
+        // set request parameters
         $arrParameter = $this->setTokenParameter($Order, $PaymentExtension, $token);
-        // データ送信(POST)
+        // data transmission(POST)
         $xmlResponse = $this->gmoEpsilonRequestService->sendData($this->gmoEpsilonService->getUrl('direct_card_payment'),$arrParameter);
         $this->app['monolog.gmoepsilon']->addInfo(' Receive Data = ' . print_r($xmlResponse, true));
-        // エラーチェック
+        // Error checking
         $errCode = $this->gmoEpsilonRequestService->getXMLValue($xmlResponse, 'RESULT', 'ERR_CODE');
 
         if (!empty($errCode)) {
+            $this->app['monolog.gmoepsilon']->addInfo('Walter Error Checking: line 99 : err_code: '.$errCode);
             $this->app['monolog.gmoepsilon']->addInfo('request error. error_code = ' . $errCode);
             $error_title = 'システムエラーが発生しました。';
             $error_message = $this->gmoEpsilonRequestService->getXMLValue($xmlResponse, 'RESULT', 'ERR_DETAIL');
@@ -105,11 +107,11 @@ class GmoEpsilon_Credit extends GmoEpsilon_Base
             'trans_code' => $this->gmoEpsilonRequestService->getXMLValue($xmlResponse, 'RESULT', 'TRANS_CODE'),
             'order_number' => $Order->getId()
         );
-        // 受注番号をセット
+        // set order number
         $this->app['session']->set('eccube.front.shopping.order.id', $Order->getId());
 
-        // 0：決済NG   1：決済OK  5：3DS処理（カード会社に接続必要）    9：システムエラー（パラメータ不足、不正等）
-        // 3DS処理（カード会社に接続必要）
+       // 0: Payment NG 1: Payment OK 5: 3DS processing (requires connection to card company) 9: System error (insufficient parameters, fraud, etc.)
+         // 3DS processing (requires connection to card company)
         $results = (int) $this->gmoEpsilonRequestService->getXMLValue($xmlResponse, 'RESULT', 'RESULT');
         if ($results === $this->const['receive_parameters']['result']['3ds']) {
             // 3Dセキュア認証送信パラメータ1　加盟店様⇒カード会社
@@ -138,7 +140,7 @@ class GmoEpsilon_Credit extends GmoEpsilon_Base
     }
 
     /**
-     * 決済完了処理
+     * Payment completion processing
      *
      * @param Order $Order
      * @param array $response
@@ -148,7 +150,7 @@ class GmoEpsilon_Credit extends GmoEpsilon_Base
     {
         $cartService = $this->app['eccube.service.cart'];
 
-        // チェックパラメータを取得
+        // get check parameter
         $arrCheckParameter = $this->getCheckParameter();
 
         // パラメータをチェック
@@ -206,23 +208,26 @@ class GmoEpsilon_Credit extends GmoEpsilon_Base
     function compTokenProcess($Order, $response)
     {
         $cartService = $this->app['eccube.service.cart'];
-        // 受注情報が更新されていない場合 ※決済完了通知との競合を避けるため
+        $this->app['monolog.gmoepsilon']->addInfo('Walter Error Checking: line 211 : compTokenProcess Started ');
+        // If the order information has not been updated *To avoid conflict with payment completion notification
         $OrderExtension = $this->app['eccube.plugin.epsilon.repository.order_extension']->find($Order->getId());
         if (empty($OrderExtension)) {
-            // トランザクション制御
+            // transaction control
             $em = $this->app['orm.em'];
             $em->getConnection()->beginTransaction();
             try {
-                // 受注情報を更新
+                // Update order information
                 $this->updateOrder($Order, $response);
                 $em->getConnection()->commit();
                 $em->flush();
-                // メール送信
+                // send e-mail
                 $this->sendOrderMail($Order);
             } catch (\Exception $e) {
+                $this->app['monolog.gmoepsilon']->addInfo('Walter Error Checking: line 226 : connection error ');
                 $em->getConnection()->rollback();
                 $em->close();
                 $this->app->log($e);
+                $this->app['monolog.gmoepsilon']->addInfo('Walter Error Checking: line 230 : Credit card token complete errors  ');
                 log_error('Credit card token complete errors ', array($e->getMessage()));
                 $this->app['monolog.gmoepsilon']->error($e);
                 $this->app->addError('front.shopping.system.error');

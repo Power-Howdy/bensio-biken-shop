@@ -48,11 +48,11 @@ class PaymentController
         // 決済方法に応じたServiceを取得
         $GmoEpsilonService = $this->getGmoEpsilonService($PaymentExtension->getPaymentTypeId());
         /*
-         * 決済処理
-         * 1.リクエストパラメータ設定
-         * 2.POSTデータ送信
-         * 3.イプシロン決済画面に遷移(コンビニ除く)
-         */
+          * payment processing
+          * 1. Request parameter setting
+          * 2. POST data transmission
+          * 3.Transition to the Epsilon payment screen (excluding convenience stores)
+          */
         $this->app['monolog.gmoepsilon']->addInfo('pay process start. order_id = ' . $Order->getId());
         // Check redirect when setting credit card use Token
         $objPlugin =& PluginUtil::getInstance($this->app);
@@ -61,7 +61,7 @@ class PaymentController
         if($paymentTypeId == $this->app['config']['EccubePaymentLite3']['const']['PAY_ID_CREDIT']  &&  $creditPaymentFlg == GmoEpsilonPlugin::TOKEN_PAYMENT) {
             if ($GmoEpsilonService->checkIpBlackList()) {
                 $error_title = '購入エラー';
-                $error_message = '購入処理でエラーが発生しました。';
+                $error_message = '購入処理でエラーが発生しました。';//An error occurred during the purchase process.
                 return $this->app['view']->render('error.twig', compact('error_title', 'error_message'));
             }
             return $this->app->redirect($this->app->url('paylite_credit_card_for_token_payment'));
@@ -448,11 +448,11 @@ class PaymentController
         // 決済方法に応じたServiceを取得
         $GmoEpsilonService = $this->app['eccube.plugin.epsilon.service.credit'];
         /*
-         * 決済処理
-         * 1.リクエストパラメータ設定
-         * 2.POSTデータ送信
-         * 3.イプシロン決済画面に遷移(コンビニ除く)
-         */
+          * payment processing
+          * 1. Request parameter setting
+          * 2. POST data transmission
+          * 3.Transition to the Epsilon payment screen (excluding convenience stores)
+          */
         $this->app['monolog.gmoepsilon']->addInfo('pay process start. order_id = ' . $Order->getId());
 
         return $GmoEpsilonService->payCreditTokenProcess($Order, $PaymentExtension);
