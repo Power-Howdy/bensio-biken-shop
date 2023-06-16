@@ -59,7 +59,7 @@ class GmoEpsilon_Base
         $destination_url = $objPlugin->getSubData('destination_url');
         $arrXML = $this->sendData($destination_url, $arrParameter);
 
-        // エラーチェック
+        // Error checking
         $err_code = $this->getXMLValue($arrXML, 'RESULT', 'ERR_CODE');
         if (!empty($err_code)) {
             $this->app['monolog.gmoepsilon']->addInfo('request error. error_code = ' . $err_code);

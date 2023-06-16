@@ -215,7 +215,7 @@ class GmoEpsilon_Convenience extends GmoEpsilon_Base
         $destination_url = $objPlugin->getSubData('destination_url');
         $arrXML = $this->sendData($destination_url, $arrParameter);
         $err_code = $this->getXMLValue($arrXML, 'RESULT', 'ERR_CODE');
-        // エラーチェック
+        // Error checking
         if (!empty($err_code)) {
             $this->app['monolog.gmoepsilon']->addInfo('request error. error_code = ' . $err_code);
             $error_title = 'システムエラーが発生しました。';
