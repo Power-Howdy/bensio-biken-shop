@@ -907,6 +907,7 @@ class ReceiptPdfService extends AbstractFPDIService
                 $price10 += $row[6];
             }
         }
+        /**
         //only when the delivery fee is not 0 yen
         if ($Order->getDeliveryFeeTotal() != 0) {
             $this->Cell($this->widthCellByFront[0], 7, '', 1, 0, 'L', 0);
@@ -918,7 +919,7 @@ class ReceiptPdfService extends AbstractFPDIService
 
             $price10 += $Order->getDeliveryFeeTotal();
         }
-
+        */
         for ($i = 0; $i < $count; ++$i) {
             $this->Cell($this->widthCellByFront[$i], 7, '', 1, 0, 'C', 0);
         }
@@ -1039,7 +1040,9 @@ class ReceiptPdfService extends AbstractFPDIService
         $this->SetTextColor(255, 0, 0);
         $this->Cell($this->widthCellByFront[4], 7, $discount8 == 0 ? '' : $this->getPriceFilter($discount8), 1, 0, 'R', 0);
         $this->Ln();
-        
+        //送料（税込１０％）
+
+
         //total payment   合計     $Order->getCharge() - $Order->getDiscount() ------  $Order->getPaymentTotal      Without Delivery fee 
         //-------------    $price10*1.1 + $price8*1.08 + $discount10 + $discount8 ------------- 
         //----------- this is different from getPaymentTotal(), --------- reason ---- delivery fee*0.1 that is 10% tax for delivery fee is not included here
